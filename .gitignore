@@ -1,0 +1,4 @@
+.history
+.env
+coverage.*
+__debug_*
