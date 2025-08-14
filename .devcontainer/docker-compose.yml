@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  clob_go:
+    container_name: clob_go
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - GIT_USER_NAME=${GIT_USER_NAME}
+        - GIT_USER_EMAIL=${GIT_USER_EMAIL}
+    command: dockerize -wait tcp://clob_postgres:5432 -timeout 40s ./.devcontainer/entrypoint.sh
+    ports:
+      - 3000:3000
+    volumes:
+      - ../:/clob_go:cached
+      - ../:/go/src:delegated
+  clob_postgres:
+    build: ./postgres
+    container_name: clob_postgres
+    environment:
+      - POSTGRES_USER=${DB_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${DB_POSTGRES_PASS}
+      - POSTGRES_DB=${DB_POSTGRES_NAME}
+    ports:
+      - ${DB_POSTGRES_EXT_PORT}:5432
+    volumes:
+      - .docker/postgresql:/var/lib/postgresql/data:delegated
+
+networks:
+  default:
+    attachable: true

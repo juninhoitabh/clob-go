@@ -1,0 +1,29 @@
+{
+  "name": "Clob Go Development Container",
+  "dockerComposeFile": ["docker-compose.yml"],
+  "service": "clob_go",
+  "workspaceFolder": "/clob_go",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "editorconfig.editorconfig",
+        "donjayamanne.githistory",
+        "eamodio.gitlens",
+        "gruntfuggly.todo-tree",
+        "mhutchie.git-graph",
+        "streetsidesoftware.code-spell-checker",
+        "streetsidesoftware.code-spell-checker-portuguese",
+        "github.copilot",
+        "github.vscode-pull-request-github",
+        "golang.go",
+        "aldijav.golangwithdidi"
+      ],
+    "settings": {
+      "terminal.integrated.defaultProfile.linux": "zsh"
+    }
+  },
+  "forwardPorts": [3000],
+  "initializeCommand": "cp .env .devcontainer/"
+}
