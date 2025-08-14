@@ -1,0 +1,101 @@
+version: "1"
+
+run:
+  concurrency: 4
+linters:
+  disable-all: true
+  enable:
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - typecheck
+    - unused
+    - unconvert
+    - reassign
+    - nilnil
+    - nilerr
+    - bodyclose
+    - containedctx
+    - contextcheck
+    - cyclop
+    - decorder
+    - errname
+    - importas
+    - interfacebloat
+    - lll
+    - maintidx
+    - makezero
+    - nestif
+    - nlreturn
+    - nolintlint
+    - prealloc
+    - promlinter
+    - tenv
+    - whitespace
+    - wsl
+linters-settings:
+  nestif:
+    min-complexity: 25
+  lll:
+    line-length: 210
+    tab-width: 2
+  cyclop:
+    max-complexity: 30
+    skip-tests: true
+  govet:
+    settings:
+      shadow:
+        strict: false
+    disable-all: true
+    enable:
+      - asmdecl
+      - assign
+      - atomic
+      - atomicalign
+      - bools
+      - buildtag
+      - cgocall
+      - composites
+      - copylocks
+      - deepequalerrors
+      - errorsas
+      - fieldalignment
+      - findcall
+      - framepointer
+      - httpresponse
+      - ifaceassert
+      - loopclosure
+      - lostcancel
+      - nilfunc
+      - nilness
+      - printf
+      - reflectvaluecompare
+      - shadow
+      - shift
+      - sigchanyzer
+      - sortslice
+      - stdmethods
+      - stringintconv
+      - structtag
+      - testinggoroutine
+      - tests
+      - unmarshal
+      - unreachable
+      - unsafeptr
+      - unusedresult
+      - unusedwrite
+  presets:
+    - bugs
+    - comment
+    - complexity
+    - error
+    - format
+    - import
+    - metalinter
+    - module
+    - performance
+    - sql
+    - style
+    - test
+    - unused
