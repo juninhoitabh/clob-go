@@ -1,4 +1,4 @@
-package accounts
+package account
 
 type AccountsRepository interface {
 	Create(id, name string) bool
