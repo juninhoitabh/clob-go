@@ -3,22 +3,22 @@ package repositories
 import (
 	"sync"
 
-	"github.com/juninhoitabh/clob-go/internal/domain/accounts"
+	"github.com/juninhoitabh/clob-go/internal/domain/account"
 	"github.com/juninhoitabh/clob-go/internal/shared"
 )
 
-type InMemoryAccountsRepository struct {
+type InMemoryAccountRepository struct {
 	mu       sync.Mutex
-	accounts map[string]*accounts.Account
+	accounts map[string]*account.Account
 }
 
-func NewInMemoryAccountsRepository() *InMemoryAccountsRepository {
-	return &InMemoryAccountsRepository{
-		accounts: make(map[string]*accounts.Account),
+func NewInMemoryAccountRepository() *InMemoryAccountRepository {
+	return &InMemoryAccountRepository{
+		accounts: make(map[string]*account.Account),
 	}
 }
 
-func (i *InMemoryAccountsRepository) Create(id, name string) bool {
+func (i *InMemoryAccountRepository) Create(id, name string) bool {
 	i.mu.Lock()
 	defer i.mu.Unlock()
 
@@ -26,16 +26,16 @@ func (i *InMemoryAccountsRepository) Create(id, name string) bool {
 		return false
 	}
 
-	i.accounts[id] = &accounts.Account{
+	i.accounts[id] = &account.Account{
 		ID:       id,
 		Name:     name,
-		Balances: make(map[string]*accounts.Balance),
+		Balances: make(map[string]*account.Balance),
 	}
 
 	return true
 }
 
-func (i *InMemoryAccountsRepository) Get(id string) (*accounts.Account, error) {
+func (i *InMemoryAccountRepository) Get(id string) (*account.Account, error) {
 	i.mu.Lock()
 	defer i.mu.Unlock()
 
@@ -47,7 +47,7 @@ func (i *InMemoryAccountsRepository) Get(id string) (*accounts.Account, error) {
 	return acct, nil
 }
 
-func (i *InMemoryAccountsRepository) Credit(id, asset string, amount int64) error {
+func (i *InMemoryAccountRepository) Credit(id, asset string, amount int64) error {
 	i.mu.Lock()
 	defer i.mu.Unlock()
 
@@ -59,7 +59,7 @@ func (i *InMemoryAccountsRepository) Credit(id, asset string, amount int64) erro
 	return acct.Credit(asset, amount)
 }
 
-func (i *InMemoryAccountsRepository) Reserve(id, asset string, amount int64) error {
+func (i *InMemoryAccountRepository) Reserve(id, asset string, amount int64) error {
 	i.mu.Lock()
 	defer i.mu.Unlock()
 
@@ -71,7 +71,7 @@ func (i *InMemoryAccountsRepository) Reserve(id, asset string, amount int64) err
 	return acct.Reserve(asset, amount)
 }
 
-func (i *InMemoryAccountsRepository) UseReserved(id, asset string, amount int64) error {
+func (i *InMemoryAccountRepository) UseReserved(id, asset string, amount int64) error {
 	i.mu.Lock()
 	defer i.mu.Unlock()
 
@@ -83,7 +83,7 @@ func (i *InMemoryAccountsRepository) UseReserved(id, asset string, amount int64)
 	return acct.UseReserved(asset, amount)
 }
 
-func (i *InMemoryAccountsRepository) ReleaseReserved(id, asset string, amount int64) error {
+func (i *InMemoryAccountRepository) ReleaseReserved(id, asset string, amount int64) error {
 	i.mu.Lock()
 	defer i.mu.Unlock()
 
