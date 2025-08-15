@@ -94,16 +94,3 @@ func (i *InMemoryAccountsRepository) ReleaseReserved(id, asset string, amount in
 
 	return acct.ReleaseReserved(asset, amount)
 }
-
-// TODO: Mover para um serviço de dominio
-func (i *InMemoryAccountsRepository) Transfer(receiver, asset string, amount int64) error {
-	i.mu.Lock()
-	defer i.mu.Unlock()
-
-	acct, ok := i.accounts[receiver]
-	if !ok {
-		return shared.ErrNotFound
-	}
-
-	return acct.Credit(asset, amount)
-}
