@@ -6,19 +6,19 @@ ENV GO111MODULE=on
 ENV CGO_ENABLED=1
 
 RUN apk update && apk upgrade --available && \
-  apk --no-cache add zsh zsh-vcs git curl wget vim openssh postgresql-client
+  apk --no-cache add zsh zsh-vcs git gcc make libc-dev binutils-gold curl wget vim openssh postgresql-client
 
-# RUN go install -v golang.org/x/tools/gopls@latest && \
-#   go install -v golang.org/x/tools/go/analysis/passes/fieldalignment/cmd/fieldalignment@latest && \
-#   go install -v honnef.co/go/tools/cmd/staticcheck@latest && \
-#   go install -v github.com/go-delve/delve/cmd/dlv@latest && \
-#   go install -v github.com/cweill/gotests/gotests@latest && \
-#   go install -v github.com/fatih/gomodifytags@latest && \
-#   go install -v github.com/josharian/impl@latest && \
-#   go install -v github.com/haya14busa/goplay/cmd/goplay@latest && \
-#   go install -v github.com/masahiro331/go-commitlinter@0.1.0 && \
-#   go install -v github.com/automation-co/husky@latest && \
-#   go install -v github.com/swaggo/swag/cmd/swag@latest
+RUN go install -v golang.org/x/tools/gopls@latest && \
+  go install -v golang.org/x/tools/go/analysis/passes/fieldalignment/cmd/fieldalignment@latest && \
+  go install -v honnef.co/go/tools/cmd/staticcheck@latest && \
+  go install -v github.com/go-delve/delve/cmd/dlv@latest && \
+  go install -v github.com/cweill/gotests/gotests@latest && \
+  go install -v github.com/fatih/gomodifytags@latest && \
+  go install -v github.com/josharian/impl@latest && \
+  go install -v github.com/haya14busa/goplay/cmd/goplay@latest && \
+  go install -v github.com/masahiro331/go-commitlinter@0.1.0 && \
+  go install -v github.com/automation-co/husky@latest && \
+  go install -v github.com/swaggo/swag/cmd/swag@latest
 
 ENV HOME=/home/go
 ENV ZSH_CUSTOM=${HOME}/.oh-my-zsh
