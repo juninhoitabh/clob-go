@@ -1,4 +1,4 @@
-package book
+package usecases
 
 import (
 	"github.com/juninhoitabh/clob-go/internal/domain/account"
@@ -16,8 +16,8 @@ type CancelOrderOutput struct {
 }
 
 type CancelOrderUseCase struct {
-	BookRepo    domainBook.BookRepository
-	AccountRepo account.AccountRepository
+	BookRepo    domainBook.IBookRepository
+	AccountRepo account.IAccountRepository
 }
 
 func (uc *CancelOrderUseCase) Execute(input CancelOrderInput) (*CancelOrderOutput, error) {

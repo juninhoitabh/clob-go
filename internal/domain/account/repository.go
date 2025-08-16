@@ -1,6 +1,6 @@
 package account
 
-type AccountRepository interface {
+type IAccountRepository interface {
 	Create(id, name string) bool
 	Get(id string) (*Account, error)
 	Credit(id, asset string, amount int64) error

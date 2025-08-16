@@ -1,4 +1,4 @@
-package book
+package usecases
 
 import (
 	"time"
@@ -26,9 +26,9 @@ type PlaceOrderOutput struct {
 }
 
 type PlaceOrderUseCase struct {
-	BookRepo    domainBook.BookRepository
-	AccountRepo account.AccountRepository
-	AccountDAO  account.AccountDAO
+	BookRepo    domainBook.IBookRepository
+	AccountRepo account.IAccountRepository
+	AccountDAO  account.IAccountDAO
 }
 
 func (uc *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, error) {

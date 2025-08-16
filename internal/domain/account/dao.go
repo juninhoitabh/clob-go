@@ -7,6 +7,6 @@ type (
 	}
 )
 
-type AccountDAO interface {
+type IAccountDAO interface {
 	Snapshot(id string) (*AccountSnapshot, error)
 }

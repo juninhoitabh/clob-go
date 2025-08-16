@@ -11,8 +11,8 @@ import (
 )
 
 type AccountController struct {
-	accountRepo account.AccountRepository
-	accountDAO  account.AccountDAO
+	accountRepo account.IAccountRepository
+	accountDAO  account.IAccountDAO
 }
 
 type (

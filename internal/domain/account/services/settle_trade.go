@@ -8,7 +8,7 @@ import (
 )
 
 func SettleTrade(
-	repo account.AccountRepository,
+	repo account.IAccountRepository,
 	buyerID, sellerID string,
 	base, quote string,
 	price, qty int64,
