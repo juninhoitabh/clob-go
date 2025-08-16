@@ -3,9 +3,9 @@ package book
 import "github.com/juninhoitabh/clob-go/internal/domain/order"
 
 type BookRepository interface {
-	GetBook(instrument string) *Book
-	SaveBook(book *Book)
-	GetOrder(orderID string) *order.Order
-	SaveOrder(o *order.Order)
-	RemoveOrder(orderID string)
+	GetBook(instrument string) (*Book, error)
+	SaveBook(book *Book) error
+	GetOrder(orderID string) (*order.Order, error)
+	SaveOrder(o *order.Order) error
+	RemoveOrder(orderID string) error
 }
