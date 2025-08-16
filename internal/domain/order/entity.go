@@ -9,7 +9,8 @@ import (
 )
 
 var (
-	ErrInvalidOrder = errors.New("invalid order")
+	ErrInvalidOrder     = errors.New("invalid order")
+	ErrInvalidSideOrder = errors.New("invalid side order")
 )
 
 type Side int
@@ -58,7 +59,7 @@ func (o *Order) Validate() error {
 	}
 
 	if o.Side != Buy && o.Side != Sell {
-		return ErrInvalidOrder
+		return ErrInvalidSideOrder
 	}
 
 	if o.Price <= 0 || o.Qty <= 0 || o.Remaining < 0 || o.Remaining > o.Qty {
