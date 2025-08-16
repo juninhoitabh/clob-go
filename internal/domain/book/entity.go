@@ -111,3 +111,19 @@ func (b *Book) BestAsk() *priceLevel {
 
 	return b.asks[b.askPrices[0]]
 }
+
+func (b *Book) BidPrices() []int64 {
+	return b.bidPrices
+}
+
+func (b *Book) AskPrices() []int64 {
+	return b.askPrices
+}
+
+func (b *Book) Bids() map[int64]*priceLevel {
+	return b.bids
+}
+
+func (b *Book) Asks() map[int64]*priceLevel {
+	return b.asks
+}
