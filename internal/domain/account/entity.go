@@ -1,21 +1,55 @@
 package account
 
-import "errors"
+import (
+	"errors"
+	"time"
+
+	baseEntity "github.com/juninhoitabh/clob-go/internal/shared/domain/entities"
+	idObjValue "github.com/juninhoitabh/clob-go/internal/shared/domain/value-objects/id"
+)
 
 var (
 	ErrInsufficient = errors.New("insufficient balance")
 	ErrInvalidParam = errors.New("invalid parameter")
 )
 
-type Balance struct {
-	Available int64
-	Reserved  int64
+type (
+	AccountProps struct {
+		Name string
+	}
+	Balance struct {
+		Available int64
+		Reserved  int64
+	}
+	Account struct {
+		baseEntity.BaseEntity
+		Name      string
+		Balances  map[string]*Balance
+		CreatedAt time.Time
+	}
+)
+
+func (a *Account) Prepare(typeId idObjValue.TypeIdEnum) error {
+	err := a.Validate()
+	if err != nil {
+		return err
+	}
+
+	a.NewBaseEntity("", typeId)
+
+	a.CreatedAt = time.Now()
+
+	a.Balances = make(map[string]*Balance)
+
+	return nil
 }
 
-type Account struct {
-	ID       string // TODO: fazer objeto de valor
-	Name     string // TODO: colocar como unica
-	Balances map[string]*Balance
+func (a *Account) Validate() error {
+	if a.Name == "" {
+		return ErrInvalidParam
+	}
+
+	return nil
 }
 
 func (a *Account) Credit(asset string, amount int64) error {
@@ -72,4 +106,17 @@ func (a *Account) ensureBalance(asset string) *Balance {
 		a.Balances[asset] = bal
 	}
 	return bal
+}
+
+func NewAccount(props AccountProps, typeId idObjValue.TypeIdEnum) (*Account, error) {
+	account := Account{
+		Name: props.Name,
+	}
+
+	err := account.Prepare(typeId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &account, nil
 }
