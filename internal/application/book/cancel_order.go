@@ -51,7 +51,7 @@ func (uc *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, 
 	}
 
 	if side == order.Buy {
-		cost := domainBook.Mul(input.Price, input.Qty)
+		cost := shared.Mul(input.Price, input.Qty)
 		if err := uc.AccountRepo.Reserve(input.AccountID, quote, cost); err != nil {
 			return nil, err
 		}
