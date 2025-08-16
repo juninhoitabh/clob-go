@@ -17,11 +17,12 @@ type CancelOrderOutput struct {
 
 type CancelOrderUseCase struct {
 	BookRepo    domainBook.IBookRepository
+	OrderRepo   domainOrder.IOrderRepository
 	AccountRepo account.IAccountRepository
 }
 
 func (c *CancelOrderUseCase) Execute(input CancelOrderInput) (*CancelOrderOutput, error) {
-	order, err := c.BookRepo.GetOrder(input.OrderID)
+	order, err := c.OrderRepo.GetOrder(input.OrderID)
 	if err != nil {
 		return nil, err
 	}
@@ -47,19 +48,29 @@ func (c *CancelOrderUseCase) Execute(input CancelOrderInput) (*CancelOrderOutput
 		return nil, err
 	}
 
+	acct, err := c.AccountRepo.Get(order.AccountID)
+	if err != nil {
+		return nil, shared.ErrNotFound
+	}
+
 	if order.Side == domainOrder.Buy {
 		amount := shared.Mul(order.Price, order.Remaining)
-		if err := c.AccountRepo.ReleaseReserved(order.AccountID, quote, amount); err != nil {
+
+		if err := acct.ReleaseReserved(quote, amount); err != nil {
 			return nil, err
 		}
 	} else {
-		if err := c.AccountRepo.ReleaseReserved(order.AccountID, base, order.Remaining); err != nil {
+		if err := acct.ReleaseReserved(base, order.Remaining); err != nil {
 			return nil, err
 		}
 	}
 
+	if err := c.AccountRepo.Save(acct); err != nil {
+		return nil, err
+	}
+
 	order.Remaining = 0
-	c.BookRepo.SaveOrder(order)
+	c.OrderRepo.SaveOrder(order)
 
 	return &CancelOrderOutput{Order: order}, nil
 }
