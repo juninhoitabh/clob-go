@@ -1,11 +1,7 @@
 package account
 
 type IAccountRepository interface {
-	Create(id, name string) bool
+	Create(account *Account) bool
+	Save(account *Account) error
 	Get(id string) (*Account, error)
-	Credit(id, asset string, amount int64) error
-	Reserve(id, asset string, amount int64) error
-	UseReserved(id, asset string, amount int64) error
-	ReleaseReserved(id, asset string, amount int64) error
-	Transfer(receiverID, asset string, amount int64) error
 }
