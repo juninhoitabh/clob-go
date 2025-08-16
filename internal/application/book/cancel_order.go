@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/juninhoitabh/clob-go/internal/domain/account"
+	accountServices "github.com/juninhoitabh/clob-go/internal/domain/account/services"
 	domainBook "github.com/juninhoitabh/clob-go/internal/domain/book"
 	"github.com/juninhoitabh/clob-go/internal/domain/book/services"
 	"github.com/juninhoitabh/clob-go/internal/domain/order"
@@ -74,16 +75,39 @@ func (uc *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, 
 
 	uc.BookRepo.SaveOrder(o)
 
-	b := uc.BookRepo.GetBook(input.Instrument)
+	b, err := uc.BookRepo.GetBook(input.Instrument)
+	if err != nil {
+		return nil, err
+	}
+
 	if b == nil {
 		b = domainBook.NewBook(input.Instrument)
-		uc.BookRepo.SaveBook(b)
+		err = uc.BookRepo.SaveBook(b)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	report := services.MatchOrder(b, o)
-	uc.BookRepo.SaveBook(b)
+	err = uc.BookRepo.SaveBook(b)
+	if err != nil {
+		return nil, err
+	}
 
-	// Aqui você pode adicionar a lógica de settleTrade como serviço de domínio também
+	for _, trade := range report.Trades {
+		err := accountServices.SettleTrade(
+			uc.AccountRepo,
+			trade.Buyer,
+			trade.Seller,
+			base,
+			quote,
+			trade.Price,
+			trade.Qty,
+		)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	return &PlaceOrderOutput{
 		Order:       o,
