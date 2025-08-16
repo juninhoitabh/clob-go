@@ -25,8 +25,8 @@ type PlaceOrderOutput struct {
 
 type PlaceOrderUseCase struct {
 	BookRepo    domainBook.IBookRepository
+	OrderRepo   domainOrder.IOrderRepository
 	AccountRepo account.IAccountRepository
-	AccountDAO  account.IAccountDAO
 }
 
 func (p *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, error) {
@@ -39,7 +39,7 @@ func (p *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, e
 		return nil, err
 	}
 
-	_, err = p.AccountDAO.Snapshot(input.AccountID)
+	acct, err := p.AccountRepo.Get(input.AccountID)
 	if err != nil {
 		return nil, shared.ErrNotFound
 	}
@@ -51,13 +51,17 @@ func (p *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, e
 
 	if side == domainOrder.Buy {
 		cost := shared.Mul(input.Price, input.Qty)
-		if err := p.AccountRepo.Reserve(input.AccountID, quote, cost); err != nil {
+		if err := acct.Reserve(quote, cost); err != nil {
 			return nil, err
 		}
 	} else {
-		if err := p.AccountRepo.Reserve(input.AccountID, base, input.Qty); err != nil {
+		if err := acct.Reserve(base, input.Qty); err != nil {
 			return nil, err
 		}
+	}
+
+	if err := p.AccountRepo.Save(acct); err != nil {
+		return nil, err
 	}
 
 	order, err := domainOrder.NewOrder(domainOrder.OrderProps{
@@ -72,7 +76,7 @@ func (p *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, e
 		return nil, err
 	}
 
-	p.BookRepo.SaveOrder(order)
+	p.OrderRepo.SaveOrder(order)
 
 	b, err := p.BookRepo.GetBook(input.Instrument)
 	if err != nil {
