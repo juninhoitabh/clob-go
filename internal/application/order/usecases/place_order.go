@@ -31,7 +31,7 @@ type PlaceOrderUseCase struct {
 	AccountDAO  account.IAccountDAO
 }
 
-func (uc *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, error) {
+func (p *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, error) {
 	if input.Price <= 0 || input.Qty <= 0 {
 		return nil, shared.ErrInvalidParam
 	}
@@ -41,7 +41,7 @@ func (uc *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, 
 		return nil, err
 	}
 
-	_, err = uc.AccountDAO.Snapshot(input.AccountID)
+	_, err = p.AccountDAO.Snapshot(input.AccountID)
 	if err != nil {
 		return nil, shared.ErrNotFound
 	}
@@ -53,11 +53,11 @@ func (uc *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, 
 
 	if side == order.Buy {
 		cost := shared.Mul(input.Price, input.Qty)
-		if err := uc.AccountRepo.Reserve(input.AccountID, quote, cost); err != nil {
+		if err := p.AccountRepo.Reserve(input.AccountID, quote, cost); err != nil {
 			return nil, err
 		}
 	} else {
-		if err := uc.AccountRepo.Reserve(input.AccountID, base, input.Qty); err != nil {
+		if err := p.AccountRepo.Reserve(input.AccountID, base, input.Qty); err != nil {
 			return nil, err
 		}
 	}
@@ -73,30 +73,30 @@ func (uc *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, 
 		CreatedAt:  time.Now(),
 	}
 
-	uc.BookRepo.SaveOrder(o)
+	p.BookRepo.SaveOrder(o)
 
-	b, err := uc.BookRepo.GetBook(input.Instrument)
+	b, err := p.BookRepo.GetBook(input.Instrument)
 	if err != nil {
 		return nil, err
 	}
 
 	if b == nil {
 		b = domainBook.NewBook(input.Instrument)
-		err = uc.BookRepo.SaveBook(b)
+		err = p.BookRepo.SaveBook(b)
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	report := services.MatchOrder(b, o)
-	err = uc.BookRepo.SaveBook(b)
+	err = p.BookRepo.SaveBook(b)
 	if err != nil {
 		return nil, err
 	}
 
 	for _, trade := range report.Trades {
 		err := accountServices.SettleTrade(
-			uc.AccountRepo,
+			p.AccountRepo,
 			trade.Buyer,
 			trade.Seller,
 			base,
