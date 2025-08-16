@@ -47,7 +47,7 @@ func (r *InMemoryBookRepository) SaveOrder(o *order.Order) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	r.orders[o.ID] = o
+	r.orders[o.GetID()] = o
 
 	return nil
 }
