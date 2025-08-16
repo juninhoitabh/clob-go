@@ -1,4 +1,4 @@
-package valueObjects_test
+package id_test
 
 import (
 	"fmt"

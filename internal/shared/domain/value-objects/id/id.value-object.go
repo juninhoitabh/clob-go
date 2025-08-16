@@ -1,4 +1,4 @@
-package valueObjects
+package id
 
 import (
 	uuid "github.com/satori/go.uuid"

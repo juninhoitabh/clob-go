@@ -15,3 +15,7 @@ func (baseEntity *BaseEntity) NewBaseEntity(id string, typeId idObjValue.TypeIdE
 
 	baseEntity.ID = idObjValue.NewID(id, typeId)
 }
+
+func (baseEntity *BaseEntity) GetID() string {
+	return baseEntity.ID.ID
+}
