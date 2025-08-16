@@ -1,15 +1,13 @@
 package usecases
 
 import (
-	"time"
-
-	"github.com/google/uuid"
 	"github.com/juninhoitabh/clob-go/internal/domain/account"
 	accountServices "github.com/juninhoitabh/clob-go/internal/domain/account/services"
 	domainBook "github.com/juninhoitabh/clob-go/internal/domain/book"
 	"github.com/juninhoitabh/clob-go/internal/domain/book/services"
 	"github.com/juninhoitabh/clob-go/internal/domain/order"
 	"github.com/juninhoitabh/clob-go/internal/shared"
+	idObjValue "github.com/juninhoitabh/clob-go/internal/shared/domain/value-objects/id"
 )
 
 type PlaceOrderInput struct {
@@ -62,18 +60,19 @@ func (p *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, e
 		}
 	}
 
-	o := &order.Order{
-		ID:         uuid.NewString(),
+	order, err := order.NewOrder(order.OrderProps{
 		AccountID:  input.AccountID,
 		Instrument: input.Instrument,
 		Side:       side,
 		Price:      input.Price,
 		Qty:        input.Qty,
 		Remaining:  input.Qty,
-		CreatedAt:  time.Now(),
+	}, idObjValue.Uuid)
+	if err != nil {
+		return nil, err
 	}
 
-	p.BookRepo.SaveOrder(o)
+	p.BookRepo.SaveOrder(order)
 
 	b, err := p.BookRepo.GetBook(input.Instrument)
 	if err != nil {
@@ -88,7 +87,7 @@ func (p *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, e
 		}
 	}
 
-	report := services.MatchOrder(b, o)
+	report := services.MatchOrder(b, order)
 	err = p.BookRepo.SaveBook(b)
 	if err != nil {
 		return nil, err
@@ -110,7 +109,7 @@ func (p *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, e
 	}
 
 	return &PlaceOrderOutput{
-		Order:       o,
+		Order:       order,
 		TradeReport: report,
 	}, nil
 }
