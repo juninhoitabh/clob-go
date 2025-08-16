@@ -7,4 +7,5 @@ type AccountRepository interface {
 	Reserve(id, asset string, amount int64) error
 	UseReserved(id, asset string, amount int64) error
 	ReleaseReserved(id, asset string, amount int64) error
+	Transfer(receiverID, asset string, amount int64) error
 }

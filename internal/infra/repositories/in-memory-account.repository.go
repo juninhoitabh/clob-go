@@ -102,3 +102,15 @@ func (i *InMemoryAccountRepository) AccountsMap() map[string]*account.Account {
 func (i *InMemoryAccountRepository) Mutex() *sync.Mutex {
 	return &i.mu
 }
+
+func (i *InMemoryAccountRepository) Transfer(receiverID, asset string, amount int64) error {
+	i.mu.Lock()
+	defer i.mu.Unlock()
+
+	acct, ok := i.accounts[receiverID]
+	if !ok {
+		return shared.ErrNotFound
+	}
+
+	return acct.Credit(asset, amount)
+}
