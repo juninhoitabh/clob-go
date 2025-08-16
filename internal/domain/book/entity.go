@@ -6,57 +6,33 @@ import (
 	"github.com/juninhoitabh/clob-go/internal/domain/order"
 )
 
-type priceLevel struct {
-	Price  int64
-	Orders []*order.Order // FIFO
-}
-
-func (pl *priceLevel) TotalQty() int64 {
-	var t int64
-
-	for _, o := range pl.Orders {
-		t += o.Remaining
-	}
-
-	return t
-}
-
+// TODO: falta id
 type Book struct {
 	Instrument string
-	bids       map[int64]*priceLevel
-	asks       map[int64]*priceLevel
+	bids       map[int64]*PriceLevel
+	asks       map[int64]*PriceLevel
 	bidPrices  []int64
 	askPrices  []int64
-}
-
-func NewBook(instrument string) *Book {
-	return &Book{
-		Instrument: instrument,
-		bids:       make(map[int64]*priceLevel),
-		asks:       make(map[int64]*priceLevel),
-	}
 }
 
 func (b *Book) AddOrder(o *order.Order) {
 	if o.Side == order.Buy {
 		pl := b.bids[o.Price]
 		if pl == nil {
-			pl = &priceLevel{Price: o.Price}
+			pl = NewPriceLevel(o.Price)
 			b.bids[o.Price] = pl
 			b.bidPrices = append(b.bidPrices, o.Price)
 			sort.Slice(b.bidPrices, func(i, j int) bool { return b.bidPrices[i] > b.bidPrices[j] })
 		}
-
 		pl.Orders = append(pl.Orders, o)
 	} else {
 		pl := b.asks[o.Price]
 		if pl == nil {
-			pl = &priceLevel{Price: o.Price}
+			pl = NewPriceLevel(o.Price)
 			b.asks[o.Price] = pl
 			b.askPrices = append(b.askPrices, o.Price)
 			sort.Slice(b.askPrices, func(i, j int) bool { return b.askPrices[i] < b.askPrices[j] })
 		}
-
 		pl.Orders = append(pl.Orders, o)
 	}
 }
@@ -96,7 +72,7 @@ func (b *Book) RemoveOrder(o *order.Order) {
 	}
 }
 
-func (b *Book) BestBid() *priceLevel {
+func (b *Book) BestBid() *PriceLevel {
 	if len(b.bidPrices) == 0 {
 		return nil
 	}
@@ -104,7 +80,7 @@ func (b *Book) BestBid() *priceLevel {
 	return b.bids[b.bidPrices[0]]
 }
 
-func (b *Book) BestAsk() *priceLevel {
+func (b *Book) BestAsk() *PriceLevel {
 	if len(b.askPrices) == 0 {
 		return nil
 	}
@@ -120,10 +96,18 @@ func (b *Book) AskPrices() []int64 {
 	return b.askPrices
 }
 
-func (b *Book) Bids() map[int64]*priceLevel {
+func (b *Book) Bids() map[int64]*PriceLevel {
 	return b.bids
 }
 
-func (b *Book) Asks() map[int64]*priceLevel {
+func (b *Book) Asks() map[int64]*PriceLevel {
 	return b.asks
+}
+
+func NewBook(instrument string) *Book {
+	return &Book{
+		Instrument: instrument,
+		bids:       make(map[int64]*PriceLevel),
+		asks:       make(map[int64]*PriceLevel),
+	}
 }
