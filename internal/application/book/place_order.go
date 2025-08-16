@@ -17,7 +17,7 @@ type CancelOrderOutput struct {
 
 type CancelOrderUseCase struct {
 	BookRepo    domainBook.BookRepository
-	AccountRepo account.AccountsRepository
+	AccountRepo account.AccountRepository
 }
 
 func (uc *CancelOrderUseCase) Execute(input CancelOrderInput) (*CancelOrderOutput, error) {
