@@ -1,116 +1,65 @@
 package book
 
 import (
-	"time"
-
-	"github.com/google/uuid"
 	"github.com/juninhoitabh/clob-go/internal/domain/account"
-	accountServices "github.com/juninhoitabh/clob-go/internal/domain/account/services"
 	domainBook "github.com/juninhoitabh/clob-go/internal/domain/book"
-	"github.com/juninhoitabh/clob-go/internal/domain/book/services"
 	"github.com/juninhoitabh/clob-go/internal/domain/order"
 	"github.com/juninhoitabh/clob-go/internal/shared"
 )
 
-type PlaceOrderInput struct {
-	AccountID  string
-	Instrument string
-	Side       string
-	Price      int64
-	Qty        int64
+type CancelOrderInput struct {
+	OrderID string
 }
 
-type PlaceOrderOutput struct {
-	Order       *order.Order
-	TradeReport *services.TradeReport
+type CancelOrderOutput struct {
+	Order *order.Order
 }
 
-type PlaceOrderUseCase struct {
+type CancelOrderUseCase struct {
 	BookRepo    domainBook.BookRepository
 	AccountRepo account.AccountRepository
-	AccountDAO  account.AccountDAO
 }
 
-func (uc *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, error) {
-	if input.Price <= 0 || input.Qty <= 0 {
-		return nil, shared.ErrInvalidParam
-	}
-
-	side, err := order.ParseSide(input.Side)
+func (uc *CancelOrderUseCase) Execute(input CancelOrderInput) (*CancelOrderOutput, error) {
+	o, err := uc.BookRepo.GetOrder(input.OrderID)
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = uc.AccountDAO.Snapshot(input.AccountID)
-	if err != nil {
+	if o == nil {
 		return nil, shared.ErrNotFound
 	}
 
-	base, quote, err := domainBook.SplitInstrument(input.Instrument)
-	if err != nil {
-		return nil, err
-	}
-
-	if side == order.Buy {
-		cost := shared.Mul(input.Price, input.Qty)
-		if err := uc.AccountRepo.Reserve(input.AccountID, quote, cost); err != nil {
-			return nil, err
-		}
-	} else {
-		if err := uc.AccountRepo.Reserve(input.AccountID, base, input.Qty); err != nil {
-			return nil, err
-		}
-	}
-
-	o := &order.Order{
-		ID:         uuid.NewString(),
-		AccountID:  input.AccountID,
-		Instrument: input.Instrument,
-		Side:       side,
-		Price:      input.Price,
-		Qty:        input.Qty,
-		Remaining:  input.Qty,
-		CreatedAt:  time.Now(),
-	}
-
-	uc.BookRepo.SaveOrder(o)
-
-	b, err := uc.BookRepo.GetBook(input.Instrument)
+	b, err := uc.BookRepo.GetBook(o.Instrument)
 	if err != nil {
 		return nil, err
 	}
 
 	if b == nil {
-		b = domainBook.NewBook(input.Instrument)
-		err = uc.BookRepo.SaveBook(b)
-		if err != nil {
-			return nil, err
-		}
+		return nil, shared.ErrNotFound
 	}
 
-	report := services.MatchOrder(b, o)
-	err = uc.BookRepo.SaveBook(b)
+	b.RemoveOrder(o)
+	uc.BookRepo.SaveBook(b)
+
+	base, quote, err := domainBook.SplitInstrument(o.Instrument)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, trade := range report.Trades {
-		err := accountServices.SettleTrade(
-			uc.AccountRepo,
-			trade.Buyer,
-			trade.Seller,
-			base,
-			quote,
-			trade.Price,
-			trade.Qty,
-		)
-		if err != nil {
+	if o.Side == order.Buy {
+		amount := shared.Mul(o.Price, o.Remaining)
+		if err := uc.AccountRepo.ReleaseReserved(o.AccountID, quote, amount); err != nil {
+			return nil, err
+		}
+	} else {
+		if err := uc.AccountRepo.ReleaseReserved(o.AccountID, base, o.Remaining); err != nil {
 			return nil, err
 		}
 	}
 
-	return &PlaceOrderOutput{
-		Order:       o,
-		TradeReport: report,
-	}, nil
+	o.Remaining = 0
+	uc.BookRepo.SaveOrder(o)
+
+	return &CancelOrderOutput{Order: o}, nil
 }
