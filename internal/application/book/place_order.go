@@ -40,7 +40,7 @@ func (uc *CancelOrderUseCase) Execute(input CancelOrderInput) (*CancelOrderOutpu
 	}
 
 	if o.Side == order.Buy {
-		amount := domainBook.Mul(o.Price, o.Remaining)
+		amount := shared.Mul(o.Price, o.Remaining)
 		if err := uc.AccountRepo.ReleaseReserved(o.AccountID, quote, amount); err != nil {
 			return nil, err
 		}
