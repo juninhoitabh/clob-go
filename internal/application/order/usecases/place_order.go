@@ -5,7 +5,7 @@ import (
 	accountServices "github.com/juninhoitabh/clob-go/internal/domain/account/services"
 	domainBook "github.com/juninhoitabh/clob-go/internal/domain/book"
 	"github.com/juninhoitabh/clob-go/internal/domain/book/services"
-	"github.com/juninhoitabh/clob-go/internal/domain/order"
+	domainOrder "github.com/juninhoitabh/clob-go/internal/domain/order"
 	"github.com/juninhoitabh/clob-go/internal/shared"
 	idObjValue "github.com/juninhoitabh/clob-go/internal/shared/domain/value-objects/id"
 )
@@ -19,7 +19,7 @@ type PlaceOrderInput struct {
 }
 
 type PlaceOrderOutput struct {
-	Order       *order.Order
+	Order       *domainOrder.Order
 	TradeReport *services.TradeReport
 }
 
@@ -34,7 +34,7 @@ func (p *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, e
 		return nil, shared.ErrInvalidParam
 	}
 
-	side, err := order.ParseSide(input.Side)
+	side, err := domainOrder.ParseSide(input.Side)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (p *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, e
 		return nil, err
 	}
 
-	if side == order.Buy {
+	if side == domainOrder.Buy {
 		cost := shared.Mul(input.Price, input.Qty)
 		if err := p.AccountRepo.Reserve(input.AccountID, quote, cost); err != nil {
 			return nil, err
@@ -60,7 +60,7 @@ func (p *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, e
 		}
 	}
 
-	order, err := order.NewOrder(order.OrderProps{
+	order, err := domainOrder.NewOrder(domainOrder.OrderProps{
 		AccountID:  input.AccountID,
 		Instrument: input.Instrument,
 		Side:       side,

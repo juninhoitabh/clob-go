@@ -41,14 +41,14 @@ type Order struct {
 }
 
 func (o *Order) Prepare(typeId idObjValue.TypeIdEnum) error {
-	o.NewBaseEntity("", typeId)
-
-	o.CreatedAt = time.Now()
-
 	err := o.Validate()
 	if err != nil {
 		return err
 	}
+
+	o.NewBaseEntity("", typeId)
+
+	o.CreatedAt = time.Now()
 
 	return nil
 }
