@@ -1,7 +1,7 @@
 package account
 
 type IAccountRepository interface {
-	Create(account *Account) bool
+	Create(account *Account) error
 	Save(account *Account) error
 	Get(id string) (*Account, error)
 }

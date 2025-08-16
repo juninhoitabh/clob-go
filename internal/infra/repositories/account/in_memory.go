@@ -18,25 +18,25 @@ func NewInMemoryAccountRepository() *InMemoryAccountRepository {
 	}
 }
 
-func (i *InMemoryAccountRepository) Create(account *domainAccount.Account) bool {
+func (i *InMemoryAccountRepository) Create(account *domainAccount.Account) error {
 	i.mu.Lock()
 	defer i.mu.Unlock()
 
 	id := account.GetID()
 
 	if _, ok := i.accounts[id]; ok {
-		return false
+		return shared.ErrAlreadyExists
 	}
 
 	for _, acct := range i.accounts {
 		if acct.Name == account.Name {
-			return false
+			return shared.ErrAlreadyExists
 		}
 	}
 
 	i.accounts[id] = account
 
-	return true
+	return nil
 }
 
 func (i *InMemoryAccountRepository) Get(id string) (*domainAccount.Account, error) {
