@@ -3,11 +3,19 @@ package services
 import (
 	"github.com/juninhoitabh/clob-go/internal/domain/book"
 	"github.com/juninhoitabh/clob-go/internal/domain/order"
-	"github.com/juninhoitabh/clob-go/internal/domain/trade"
 )
 
+type Trade struct {
+	TakerOrderID string
+	MakerOrderID string
+	Price        int64
+	Qty          int64
+	Buyer        string
+	Seller       string
+}
+
 type TradeReport struct {
-	Trades []trade.Trade
+	Trades []Trade
 }
 
 func MatchOrder(b *book.Book, o *order.Order) *TradeReport {
@@ -25,7 +33,7 @@ func MatchOrder(b *book.Book, o *order.Order) *TradeReport {
 				tradeQty := min(o.Remaining, maker.Remaining)
 				execPrice := maker.Price
 
-				report.Trades = append(report.Trades, trade.Trade{
+				report.Trades = append(report.Trades, Trade{
 					TakerOrderID: o.ID,
 					MakerOrderID: maker.ID,
 					Price:        execPrice,
@@ -60,7 +68,7 @@ func MatchOrder(b *book.Book, o *order.Order) *TradeReport {
 				tradeQty := min(o.Remaining, maker.Remaining)
 				execPrice := maker.Price
 
-				report.Trades = append(report.Trades, trade.Trade{
+				report.Trades = append(report.Trades, Trade{
 					TakerOrderID: o.ID,
 					MakerOrderID: maker.ID,
 					Price:        execPrice,
