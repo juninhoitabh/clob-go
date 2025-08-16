@@ -1,18 +1,52 @@
 package book
 
 import (
+	"errors"
 	"sort"
 
 	"github.com/juninhoitabh/clob-go/internal/domain/order"
+	baseEntity "github.com/juninhoitabh/clob-go/internal/shared/domain/entities"
+	idObjValue "github.com/juninhoitabh/clob-go/internal/shared/domain/value-objects/id"
 )
 
-// TODO: falta id
-type Book struct {
-	Instrument string
-	bids       map[int64]*PriceLevel
-	asks       map[int64]*PriceLevel
-	bidPrices  []int64
-	askPrices  []int64
+var (
+	ErrInvalidInstrumentBook = errors.New("invalid instrument book")
+)
+
+type (
+	BookProps struct {
+		Instrument string
+	}
+	Book struct {
+		baseEntity.BaseEntity
+		Instrument string
+		bids       map[int64]*PriceLevel
+		asks       map[int64]*PriceLevel
+		bidPrices  []int64
+		askPrices  []int64
+	}
+)
+
+func (b *Book) Prepare(typeId idObjValue.TypeIdEnum) error {
+	err := b.Validate()
+	if err != nil {
+		return err
+	}
+
+	b.NewBaseEntity("", typeId)
+
+	b.bids = make(map[int64]*PriceLevel)
+	b.asks = make(map[int64]*PriceLevel)
+
+	return nil
+}
+
+func (b *Book) Validate() error {
+	if b.Instrument == "" {
+		return ErrInvalidInstrumentBook
+	}
+
+	return nil
 }
 
 func (b *Book) AddOrder(o *order.Order) {
@@ -104,10 +138,15 @@ func (b *Book) Asks() map[int64]*PriceLevel {
 	return b.asks
 }
 
-func NewBook(instrument string) *Book {
-	return &Book{
-		Instrument: instrument,
-		bids:       make(map[int64]*PriceLevel),
-		asks:       make(map[int64]*PriceLevel),
+func NewBook(props BookProps, typeId idObjValue.TypeIdEnum) (*Book, error) {
+	book := Book{
+		Instrument: props.Instrument,
 	}
+
+	err := book.Prepare(typeId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &book, nil
 }
