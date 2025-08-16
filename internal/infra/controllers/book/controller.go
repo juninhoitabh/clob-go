@@ -5,10 +5,12 @@ import (
 	"net/http"
 	"strings"
 
+	bookUsecases "github.com/juninhoitabh/clob-go/internal/application/book/usecases"
 	"github.com/juninhoitabh/clob-go/internal/shared"
 )
 
 type BookController struct {
+	snapshotBookUseCase bookUsecases.ISnapshotBookUseCase
 }
 
 func (b *BookController) ServeHTTP(w http.ResponseWriter, req *http.Request) {
@@ -21,7 +23,19 @@ func (b *BookController) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	book := b.Eng.SnapshotBook(inst)
+	book, err := b.snapshotBookUseCase.Execute(inst)
+	if err != nil {
+		status := http.StatusBadRequest
+
+		if strings.Contains(err.Error(), "not found") {
+			status = http.StatusNotFound
+		}
+
+		http.Error(w, err.Error(), status)
+
+		return
+	}
+
 	if book == nil {
 		http.Error(w, fmt.Sprintf("instrument %s not found (empty book yet?)", inst), http.StatusNotFound)
 

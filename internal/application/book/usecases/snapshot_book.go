@@ -1,4 +1,4 @@
-package book
+package usecases
 
 import (
 	domainBook "github.com/juninhoitabh/clob-go/internal/domain/book"
@@ -17,7 +17,7 @@ type Level struct {
 }
 
 type SnapshotBookUseCase struct {
-	BookRepo domainBook.BookRepository
+	BookRepo domainBook.IBookRepository
 }
 
 func (uc *SnapshotBookUseCase) Execute(instrument string) (*SnapshotBookOutput, error) {
