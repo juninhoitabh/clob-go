@@ -6,10 +6,13 @@ import (
 	"net/http"
 	"strings"
 
+	orderUsecases "github.com/juninhoitabh/clob-go/internal/application/order/usecases"
 	"github.com/juninhoitabh/clob-go/internal/shared"
 )
 
 type OrderController struct {
+	cancelOrderUseCase orderUsecases.ICancelOrderUseCase
+	placeOrderUseCase  orderUsecases.IPlaceOrderUseCase
 }
 
 type placeReq struct {
@@ -34,11 +37,19 @@ func (o *OrderController) Place(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	order, report, err := o.Eng.Place(body.AccountID, strings.ToUpper(body.Instrument), strings.ToLower(body.Side), body.Price, body.Qty)
+	placeOrderInput := orderUsecases.PlaceOrderInput{
+		AccountID:  body.AccountID,
+		Instrument: strings.ToUpper(body.Instrument),
+		Side:       strings.ToLower(body.Side),
+		Price:      body.Price,
+		Qty:        body.Qty,
+	}
+
+	placeOrderOutput, err := o.placeOrderUseCase.Execute(placeOrderInput)
 	if err != nil {
 		status := http.StatusBadRequest
 
-		if errors.Is(err, engine.ErrNotFound) {
+		if errors.Is(err, shared.ErrNotFound) {
 			status = http.StatusNotFound
 		}
 
@@ -48,8 +59,8 @@ func (o *OrderController) Place(w http.ResponseWriter, req *http.Request) {
 	}
 
 	shared.WriteJSON(w, http.StatusCreated, map[string]any{
-		"order":  order.Public(),
-		"report": report,
+		"order":  placeOrderOutput.Order.Public(),
+		"report": placeOrderOutput.TradeReport,
 	})
 }
 
