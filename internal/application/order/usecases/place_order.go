@@ -10,24 +10,24 @@ import (
 	idObjValue "github.com/juninhoitabh/clob-go/internal/shared/domain/value-objects/id"
 )
 
-type PlaceOrderInput struct {
-	AccountID  string
-	Instrument string
-	Side       string
-	Price      int64
-	Qty        int64
-}
-
-type PlaceOrderOutput struct {
-	Order       *domainOrder.Order
-	TradeReport *services.TradeReport
-}
-
-type PlaceOrderUseCase struct {
-	BookRepo    domainBook.IBookRepository
-	OrderRepo   domainOrder.IOrderRepository
-	AccountRepo account.IAccountRepository
-}
+type (
+	PlaceOrderInput struct {
+		AccountID  string
+		Instrument string
+		Side       string
+		Price      int64
+		Qty        int64
+	}
+	PlaceOrderOutput struct {
+		Order       *domainOrder.Order
+		TradeReport *services.TradeReport
+	}
+	PlaceOrderUseCase struct {
+		BookRepo    domainBook.IBookRepository
+		OrderRepo   domainOrder.IOrderRepository
+		AccountRepo account.IAccountRepository
+	}
+)
 
 func (p *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, error) {
 	if input.Price <= 0 || input.Qty <= 0 {

@@ -7,19 +7,19 @@ import (
 	"github.com/juninhoitabh/clob-go/internal/shared"
 )
 
-type CancelOrderInput struct {
-	OrderID string
-}
-
-type CancelOrderOutput struct {
-	Order *domainOrder.Order
-}
-
-type CancelOrderUseCase struct {
-	BookRepo    domainBook.IBookRepository
-	OrderRepo   domainOrder.IOrderRepository
-	AccountRepo account.IAccountRepository
-}
+type (
+	CancelOrderInput struct {
+		OrderID string
+	}
+	CancelOrderOutput struct {
+		Order *domainOrder.Order
+	}
+	CancelOrderUseCase struct {
+		BookRepo    domainBook.IBookRepository
+		OrderRepo   domainOrder.IOrderRepository
+		AccountRepo account.IAccountRepository
+	}
+)
 
 func (c *CancelOrderUseCase) Execute(input CancelOrderInput) (*CancelOrderOutput, error) {
 	order, err := c.OrderRepo.GetOrder(input.OrderID)

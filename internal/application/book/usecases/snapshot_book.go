@@ -5,23 +5,23 @@ import (
 	"github.com/juninhoitabh/clob-go/internal/shared"
 )
 
-type SnapshotBookOutput struct {
-	Instrument string
-	Bids       []Level
-	Asks       []Level
-}
+type (
+	SnapshotBookOutput struct {
+		Instrument string
+		Bids       []Level
+		Asks       []Level
+	}
+	Level struct {
+		Price int64
+		Qty   int64
+	}
+	SnapshotBookUseCase struct {
+		BookRepo domainBook.IBookRepository
+	}
+)
 
-type Level struct {
-	Price int64
-	Qty   int64
-}
-
-type SnapshotBookUseCase struct {
-	BookRepo domainBook.IBookRepository
-}
-
-func (uc *SnapshotBookUseCase) Execute(instrument string) (*SnapshotBookOutput, error) {
-	b, err := uc.BookRepo.GetBook(instrument)
+func (s *SnapshotBookUseCase) Execute(instrument string) (*SnapshotBookOutput, error) {
+	b, err := s.BookRepo.GetBook(instrument)
 	if err != nil {
 		return nil, err
 	}
