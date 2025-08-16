@@ -6,13 +6,14 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/juninhoitabh/clob-go/internal/domain/account"
+	domainAccount "github.com/juninhoitabh/clob-go/internal/domain/account"
 	"github.com/juninhoitabh/clob-go/internal/shared"
+	idObjValue "github.com/juninhoitabh/clob-go/internal/shared/domain/value-objects/id"
 )
 
 type AccountController struct {
-	accountRepo account.IAccountRepository
-	accountDAO  account.IAccountDAO
+	accountRepo domainAccount.IAccountRepository
+	accountDAO  domainAccount.IAccountDAO
 }
 
 type (
@@ -30,20 +31,32 @@ func (a *AccountController) Create(w http.ResponseWriter, req *http.Request) {
 	var body createReq
 	if err := json.NewDecoder(req.Body).Decode(&body); err != nil {
 		http.Error(w, "invalid json", http.StatusBadRequest)
+
 		return
 	}
 
 	if body.AccountID == "" {
 		http.Error(w, "account_id required", http.StatusBadRequest)
+
 		return
 	}
 
-	created := a.accountRepo.Create(body.AccountID, "") // TODO: verrr
+	account, err := domainAccount.NewAccount(domainAccount.AccountProps{
+		Name: body.AccountID,
+	}, idObjValue.Uuid)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+
+		return
+	}
+
+	created := a.accountRepo.Create(account)
 	if created {
 		shared.WriteJSON(w, http.StatusCreated, map[string]any{"status": "created"})
 		return
 	}
 
+	// TODO: retornar id
 	shared.WriteJSON(w, http.StatusOK, map[string]any{"status": "exists"})
 }
 
@@ -87,7 +100,22 @@ func (a *AccountController) Credit(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := a.accountRepo.Credit(id, strings.ToUpper(body.Asset), body.Amount); err != nil {
+	acct, err := a.accountRepo.Get(id)
+	if err != nil {
+		status := http.StatusBadRequest
+
+		if errors.Is(err, shared.ErrNotFound) {
+			status = http.StatusNotFound
+		}
+
+		http.Error(w, err.Error(), status)
+
+		return
+	}
+
+	acct.Credit(strings.ToUpper(body.Asset), body.Amount)
+
+	if err := a.accountRepo.Save(acct); err != nil {
 		status := http.StatusBadRequest
 
 		if errors.Is(err, shared.ErrNotFound) {
