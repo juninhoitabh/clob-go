@@ -71,11 +71,15 @@ func (o *OrderController) Cancel(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	order, err := o.Eng.Cancel(oid)
+	cancelOrderInput := orderUsecases.CancelOrderInput{
+		OrderID: oid,
+	}
+
+	cancelOrderOutput, err := o.cancelOrderUseCase.Execute(cancelOrderInput)
 	if err != nil {
 		status := http.StatusBadRequest
 
-		if errors.Is(err, engine.ErrNotFound) {
+		if errors.Is(err, shared.ErrNotFound) {
 			status = http.StatusNotFound
 		}
 
@@ -84,5 +88,5 @@ func (o *OrderController) Cancel(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	shared.WriteJSON(w, http.StatusOK, map[string]any{"order": order.Public(), "status": "canceled"})
+	shared.WriteJSON(w, http.StatusOK, map[string]any{"order": cancelOrderOutput.Order.Public(), "status": "canceled"})
 }

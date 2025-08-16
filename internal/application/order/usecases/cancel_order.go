@@ -3,7 +3,7 @@ package usecases
 import (
 	"github.com/juninhoitabh/clob-go/internal/domain/account"
 	domainBook "github.com/juninhoitabh/clob-go/internal/domain/book"
-	"github.com/juninhoitabh/clob-go/internal/domain/order"
+	domainOrder "github.com/juninhoitabh/clob-go/internal/domain/order"
 	"github.com/juninhoitabh/clob-go/internal/shared"
 )
 
@@ -12,7 +12,7 @@ type CancelOrderInput struct {
 }
 
 type CancelOrderOutput struct {
-	Order *order.Order
+	Order *domainOrder.Order
 }
 
 type CancelOrderUseCase struct {
@@ -20,17 +20,17 @@ type CancelOrderUseCase struct {
 	AccountRepo account.IAccountRepository
 }
 
-func (uc *CancelOrderUseCase) Execute(input CancelOrderInput) (*CancelOrderOutput, error) {
-	o, err := uc.BookRepo.GetOrder(input.OrderID)
+func (c *CancelOrderUseCase) Execute(input CancelOrderInput) (*CancelOrderOutput, error) {
+	order, err := c.BookRepo.GetOrder(input.OrderID)
 	if err != nil {
 		return nil, err
 	}
 
-	if o == nil {
+	if order == nil {
 		return nil, shared.ErrNotFound
 	}
 
-	b, err := uc.BookRepo.GetBook(o.Instrument)
+	b, err := c.BookRepo.GetBook(order.Instrument)
 	if err != nil {
 		return nil, err
 	}
@@ -39,27 +39,27 @@ func (uc *CancelOrderUseCase) Execute(input CancelOrderInput) (*CancelOrderOutpu
 		return nil, shared.ErrNotFound
 	}
 
-	b.RemoveOrder(o)
-	uc.BookRepo.SaveBook(b)
+	b.RemoveOrder(order)
+	c.BookRepo.SaveBook(b)
 
-	base, quote, err := domainBook.SplitInstrument(o.Instrument)
+	base, quote, err := domainBook.SplitInstrument(order.Instrument)
 	if err != nil {
 		return nil, err
 	}
 
-	if o.Side == order.Buy {
-		amount := shared.Mul(o.Price, o.Remaining)
-		if err := uc.AccountRepo.ReleaseReserved(o.AccountID, quote, amount); err != nil {
+	if order.Side == domainOrder.Buy {
+		amount := shared.Mul(order.Price, order.Remaining)
+		if err := c.AccountRepo.ReleaseReserved(order.AccountID, quote, amount); err != nil {
 			return nil, err
 		}
 	} else {
-		if err := uc.AccountRepo.ReleaseReserved(o.AccountID, base, o.Remaining); err != nil {
+		if err := c.AccountRepo.ReleaseReserved(order.AccountID, base, order.Remaining); err != nil {
 			return nil, err
 		}
 	}
 
-	o.Remaining = 0
-	uc.BookRepo.SaveOrder(o)
+	order.Remaining = 0
+	c.BookRepo.SaveOrder(order)
 
-	return &CancelOrderOutput{Order: o}, nil
+	return &CancelOrderOutput{Order: order}, nil
 }
