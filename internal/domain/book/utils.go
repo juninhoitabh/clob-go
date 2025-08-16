@@ -12,5 +12,3 @@ func SplitInstrument(inst string) (base string, quote string, err error) {
 	}
 	return strings.ToUpper(parts[0]), strings.ToUpper(parts[1]), nil
 }
-
-func Mul(a, b int64) int64 { return a * b }
