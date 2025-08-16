@@ -21,12 +21,20 @@ type CancelOrderUseCase struct {
 }
 
 func (uc *CancelOrderUseCase) Execute(input CancelOrderInput) (*CancelOrderOutput, error) {
-	o := uc.BookRepo.GetOrder(input.OrderID)
+	o, err := uc.BookRepo.GetOrder(input.OrderID)
+	if err != nil {
+		return nil, err
+	}
+
 	if o == nil {
 		return nil, shared.ErrNotFound
 	}
 
-	b := uc.BookRepo.GetBook(o.Instrument)
+	b, err := uc.BookRepo.GetBook(o.Instrument)
+	if err != nil {
+		return nil, err
+	}
+
 	if b == nil {
 		return nil, shared.ErrNotFound
 	}
