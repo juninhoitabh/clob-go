@@ -3,39 +3,43 @@ package repositories
 import (
 	"sync"
 
-	"github.com/juninhoitabh/clob-go/internal/domain/account"
+	domainAccount "github.com/juninhoitabh/clob-go/internal/domain/account"
 	"github.com/juninhoitabh/clob-go/internal/shared"
 )
 
 type InMemoryAccountRepository struct {
 	mu       sync.Mutex
-	accounts map[string]*account.Account
+	accounts map[string]*domainAccount.Account
 }
 
 func NewInMemoryAccountRepository() *InMemoryAccountRepository {
 	return &InMemoryAccountRepository{
-		accounts: make(map[string]*account.Account),
+		accounts: make(map[string]*domainAccount.Account),
 	}
 }
 
-func (i *InMemoryAccountRepository) Create(id, name string) bool {
+func (i *InMemoryAccountRepository) Create(account *domainAccount.Account) bool {
 	i.mu.Lock()
 	defer i.mu.Unlock()
+
+	id := account.GetID()
 
 	if _, ok := i.accounts[id]; ok {
 		return false
 	}
 
-	i.accounts[id] = &account.Account{
-		ID:       id,
-		Name:     name,
-		Balances: make(map[string]*account.Balance),
+	for _, acct := range i.accounts {
+		if acct.Name == account.Name {
+			return false
+		}
 	}
+
+	i.accounts[id] = account
 
 	return true
 }
 
-func (i *InMemoryAccountRepository) Get(id string) (*account.Account, error) {
+func (i *InMemoryAccountRepository) Get(id string) (*domainAccount.Account, error) {
 	i.mu.Lock()
 	defer i.mu.Unlock()
 
@@ -47,70 +51,19 @@ func (i *InMemoryAccountRepository) Get(id string) (*account.Account, error) {
 	return acct, nil
 }
 
-func (i *InMemoryAccountRepository) Credit(id, asset string, amount int64) error {
+func (i *InMemoryAccountRepository) Save(account *domainAccount.Account) error {
 	i.mu.Lock()
 	defer i.mu.Unlock()
 
-	acct, ok := i.accounts[id]
-	if !ok {
-		return shared.ErrNotFound
-	}
-
-	return acct.Credit(asset, amount)
+	id := account.GetID()
+	i.accounts[id] = account
+	return nil
 }
 
-func (i *InMemoryAccountRepository) Reserve(id, asset string, amount int64) error {
-	i.mu.Lock()
-	defer i.mu.Unlock()
-
-	acct, ok := i.accounts[id]
-	if !ok {
-		return shared.ErrNotFound
-	}
-
-	return acct.Reserve(asset, amount)
-}
-
-func (i *InMemoryAccountRepository) UseReserved(id, asset string, amount int64) error {
-	i.mu.Lock()
-	defer i.mu.Unlock()
-
-	acct, ok := i.accounts[id]
-	if !ok {
-		return shared.ErrNotFound
-	}
-
-	return acct.UseReserved(asset, amount)
-}
-
-func (i *InMemoryAccountRepository) ReleaseReserved(id, asset string, amount int64) error {
-	i.mu.Lock()
-	defer i.mu.Unlock()
-
-	acct, ok := i.accounts[id]
-	if !ok {
-		return shared.ErrNotFound
-	}
-
-	return acct.ReleaseReserved(asset, amount)
-}
-
-func (i *InMemoryAccountRepository) AccountsMap() map[string]*account.Account {
+func (i *InMemoryAccountRepository) AccountsMap() map[string]*domainAccount.Account {
 	return i.accounts
 }
 
 func (i *InMemoryAccountRepository) Mutex() *sync.Mutex {
 	return &i.mu
-}
-
-func (i *InMemoryAccountRepository) Transfer(receiverID, asset string, amount int64) error {
-	i.mu.Lock()
-	defer i.mu.Unlock()
-
-	acct, ok := i.accounts[receiverID]
-	if !ok {
-		return shared.ErrNotFound
-	}
-
-	return acct.Credit(asset, amount)
 }

@@ -15,18 +15,38 @@ func SettleTrade(
 ) error {
 	cost := shared.Mul(price, qty)
 
-	if err := repo.UseReserved(buyerID, quote, cost); err != nil {
+	buyerAcct, err := repo.Get(buyerID)
+	if err != nil {
+		return shared.ErrNotFound
+	}
+
+	sellerAcct, err := repo.Get(sellerID)
+	if err != nil {
+		return shared.ErrNotFound
+	}
+
+	if err := buyerAcct.UseReserved(quote, cost); err != nil {
 		return fmt.Errorf("buyer use reserved: %w", err)
 	}
-	if err := repo.Transfer(buyerID, base, qty); err != nil {
+
+	if err := buyerAcct.Credit(base, qty); err != nil {
 		return fmt.Errorf("transfer base to buyer: %w", err)
 	}
 
-	if err := repo.UseReserved(sellerID, base, qty); err != nil {
+	if err := repo.Save(buyerAcct); err != nil {
+		return err
+	}
+
+	if err := sellerAcct.UseReserved(base, qty); err != nil {
 		return fmt.Errorf("seller use reserved: %w", err)
 	}
-	if err := repo.Transfer(sellerID, quote, cost); err != nil {
+
+	if err := sellerAcct.Credit(quote, cost); err != nil {
 		return fmt.Errorf("transfer quote to seller: %w", err)
+	}
+
+	if err := repo.Save(sellerAcct); err != nil {
+		return err
 	}
 
 	return nil
