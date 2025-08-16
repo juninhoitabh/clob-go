@@ -84,7 +84,13 @@ func (p *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, e
 	}
 
 	if b == nil {
-		b = domainBook.NewBook(input.Instrument)
+		b, err = domainBook.NewBook(domainBook.BookProps{
+			Instrument: input.Instrument,
+		}, idObjValue.Uuid)
+		if err != nil {
+			return nil, err
+		}
+
 		err = p.BookRepo.SaveBook(b)
 		if err != nil {
 			return nil, err
