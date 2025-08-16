@@ -6,6 +6,9 @@ import (
 )
 
 type (
+	SnapshotBookInput struct {
+		Instrument string
+	}
 	SnapshotBookOutput struct {
 		Instrument string
 		Bids       []Level
@@ -20,8 +23,8 @@ type (
 	}
 )
 
-func (s *SnapshotBookUseCase) Execute(instrument string) (*SnapshotBookOutput, error) {
-	b, err := s.BookRepo.GetBook(instrument)
+func (s *SnapshotBookUseCase) Execute(input SnapshotBookInput) (*SnapshotBookOutput, error) {
+	b, err := s.BookRepo.GetBook(input.Instrument)
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +34,7 @@ func (s *SnapshotBookUseCase) Execute(instrument string) (*SnapshotBookOutput, e
 	}
 
 	out := &SnapshotBookOutput{
-		Instrument: instrument,
+		Instrument: input.Instrument,
 		Bids:       []Level{},
 		Asks:       []Level{},
 	}

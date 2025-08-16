@@ -2,6 +2,6 @@ package usecases
 
 type (
 	ISnapshotBookUseCase interface {
-		Execute(instrument string) (*SnapshotBookOutput, error)
+		Execute(input SnapshotBookInput) (*SnapshotBookOutput, error)
 	}
 )

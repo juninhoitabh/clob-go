@@ -23,7 +23,9 @@ func (b *BookController) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	book, err := b.snapshotBookUseCase.Execute(inst)
+	book, err := b.snapshotBookUseCase.Execute(bookUsecases.SnapshotBookInput{
+		Instrument: inst,
+	})
 	if err != nil {
 		status := http.StatusBadRequest
 
