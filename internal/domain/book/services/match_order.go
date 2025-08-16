@@ -34,8 +34,8 @@ func MatchOrder(b *book.Book, o *order.Order) *TradeReport {
 				execPrice := maker.Price
 
 				report.Trades = append(report.Trades, Trade{
-					TakerOrderID: o.ID,
-					MakerOrderID: maker.ID,
+					TakerOrderID: o.GetID(),
+					MakerOrderID: maker.GetID(),
 					Price:        execPrice,
 					Qty:          tradeQty,
 					Buyer:        o.AccountID,
@@ -69,8 +69,8 @@ func MatchOrder(b *book.Book, o *order.Order) *TradeReport {
 				execPrice := maker.Price
 
 				report.Trades = append(report.Trades, Trade{
-					TakerOrderID: o.ID,
-					MakerOrderID: maker.ID,
+					TakerOrderID: o.GetID(),
+					MakerOrderID: maker.GetID(),
 					Price:        execPrice,
 					Qty:          tradeQty,
 					Buyer:        maker.AccountID,
