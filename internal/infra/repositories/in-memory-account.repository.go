@@ -94,3 +94,11 @@ func (i *InMemoryAccountRepository) ReleaseReserved(id, asset string, amount int
 
 	return acct.ReleaseReserved(asset, amount)
 }
+
+func (i *InMemoryAccountRepository) AccountsMap() map[string]*account.Account {
+	return i.accounts
+}
+
+func (i *InMemoryAccountRepository) Mutex() *sync.Mutex {
+	return &i.mu
+}

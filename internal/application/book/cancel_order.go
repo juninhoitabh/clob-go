@@ -26,7 +26,8 @@ type PlaceOrderOutput struct {
 
 type PlaceOrderUseCase struct {
 	BookRepo    domainBook.BookRepository
-	AccountRepo account.AccountsRepository
+	AccountRepo account.AccountRepository
+	AccountDAO  account.AccountDAO
 }
 
 func (uc *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, error) {
@@ -39,7 +40,7 @@ func (uc *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, 
 		return nil, err
 	}
 
-	_, err = uc.AccountRepo.Snapshot(input.AccountID)
+	_, err = uc.AccountDAO.Snapshot(input.AccountID)
 	if err != nil {
 		return nil, shared.ErrNotFound
 	}
