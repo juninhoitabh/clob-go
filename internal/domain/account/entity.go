@@ -2,6 +2,7 @@ package account
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	baseEntity "github.com/juninhoitabh/clob-go/internal/shared/domain/entities"
@@ -56,8 +57,10 @@ func (a *Account) Credit(asset string, amount int64) error {
 	if amount <= 0 {
 		return ErrInvalidParam
 	}
+
 	bal := a.ensureBalance(asset)
 	bal.Available += amount
+
 	return nil
 }
 
@@ -65,12 +68,15 @@ func (a *Account) Reserve(asset string, amount int64) error {
 	if amount <= 0 {
 		return ErrInvalidParam
 	}
+
 	bal := a.ensureBalance(asset)
 	if bal.Available < amount {
 		return ErrInsufficient
 	}
+
 	bal.Available -= amount
 	bal.Reserved += amount
+
 	return nil
 }
 
@@ -78,11 +84,14 @@ func (a *Account) UseReserved(asset string, amount int64) error {
 	if amount < 0 {
 		return ErrInvalidParam
 	}
+
 	bal := a.ensureBalance(asset)
 	if bal.Reserved < amount {
 		return ErrInsufficient
 	}
+
 	bal.Reserved -= amount
+
 	return nil
 }
 
@@ -90,16 +99,21 @@ func (a *Account) ReleaseReserved(asset string, amount int64) error {
 	if amount < 0 {
 		return ErrInvalidParam
 	}
+
 	bal := a.ensureBalance(asset)
 	if bal.Reserved < amount {
 		return ErrInsufficient
 	}
+
 	bal.Reserved -= amount
 	bal.Available += amount
+
 	return nil
 }
 
 func (a *Account) ensureBalance(asset string) *Balance {
+	asset = strings.ToUpper(asset)
+
 	bal, ok := a.Balances[asset]
 	if !ok {
 		bal = &Balance{}
