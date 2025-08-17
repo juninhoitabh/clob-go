@@ -5,11 +5,6 @@ import (
 )
 
 type (
-	CreditAccountInput struct {
-		AccountID string
-		Asset     string
-		Amount    int64
-	}
 	CreditAccountUseCase struct {
 		accountRepo domainAccount.IAccountRepository
 	}

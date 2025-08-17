@@ -6,20 +6,12 @@ import (
 )
 
 type (
-	CreateAccountInput struct {
-		AccountName string
-	}
-	CreateAccountOutput struct {
-		ID   string
-		Name string
-	}
 	CreateAccountUseCase struct {
 		accountRepo domainAccount.IAccountRepository
 	}
 )
 
 func (c *CreateAccountUseCase) Execute(input CreateAccountInput) (*CreateAccountOutput, error) {
-
 	account, err := domainAccount.NewAccount(domainAccount.AccountProps{
 		Name: input.AccountName,
 	}, idObjValue.Uuid)
