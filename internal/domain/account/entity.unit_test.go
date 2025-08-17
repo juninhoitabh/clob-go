@@ -13,16 +13,16 @@ import (
 	idObjValue "github.com/juninhoitabh/clob-go/internal/shared/domain/value-objects/id"
 )
 
-type AccountTestSuite struct {
+type AccountUnitTestSuite struct {
 	suite.Suite
 	propsFaker account.AccountProps
 }
 
-func (suite *AccountTestSuite) SetupTest() {
+func (suite *AccountUnitTestSuite) SetupTest() {
 	suite.propsFaker = fakers.AccountPropsFaker()
 }
 
-func (suite *AccountTestSuite) TestNewAccount_Success() {
+func (suite *AccountUnitTestSuite) TestNewAccount_Success() {
 	acc, err := account.NewAccount(suite.propsFaker, idObjValue.Uuid)
 	assert.NoError(suite.T(), err)
 	assert.NotNil(suite.T(), acc)
@@ -31,27 +31,27 @@ func (suite *AccountTestSuite) TestNewAccount_Success() {
 	assert.NotNil(suite.T(), acc.Balances)
 }
 
-func (suite *AccountTestSuite) TestValidate_ErrorOnEmptyName() {
+func (suite *AccountUnitTestSuite) TestValidate_ErrorOnEmptyName() {
 	props := account.AccountProps{Name: ""}
 	acc := account.Account{Name: props.Name}
 	err := acc.Validate()
 	assert.ErrorIs(suite.T(), err, account.ErrInvalidParam)
 }
 
-func (suite *AccountTestSuite) TestCredit_Success() {
+func (suite *AccountUnitTestSuite) TestCredit_Success() {
 	acc, _ := account.NewAccount(suite.propsFaker, idObjValue.Uuid)
 	err := acc.Credit("BTC", 100)
 	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), int64(100), acc.Balances["BTC"].Available)
 }
 
-func (suite *AccountTestSuite) TestCredit_ErrorOnNegativeAmount() {
+func (suite *AccountUnitTestSuite) TestCredit_ErrorOnNegativeAmount() {
 	acc, _ := account.NewAccount(suite.propsFaker, idObjValue.Uuid)
 	err := acc.Credit("BTC", -10)
 	assert.ErrorIs(suite.T(), err, account.ErrInvalidParam)
 }
 
-func (suite *AccountTestSuite) TestReserve_Success() {
+func (suite *AccountUnitTestSuite) TestReserve_Success() {
 	acc, _ := account.NewAccount(suite.propsFaker, idObjValue.Uuid)
 	_ = acc.Credit("ETH", 50)
 	err := acc.Reserve("ETH", 30)
@@ -60,14 +60,14 @@ func (suite *AccountTestSuite) TestReserve_Success() {
 	assert.Equal(suite.T(), int64(30), acc.Balances["ETH"].Reserved)
 }
 
-func (suite *AccountTestSuite) TestReserve_ErrorOnInsufficientFunds() {
+func (suite *AccountUnitTestSuite) TestReserve_ErrorOnInsufficientFunds() {
 	acc, _ := account.NewAccount(suite.propsFaker, idObjValue.Uuid)
 	_ = acc.Credit("ETH", 10)
 	err := acc.Reserve("ETH", 20)
 	assert.ErrorIs(suite.T(), err, account.ErrInsufficient)
 }
 
-func (suite *AccountTestSuite) TestUseReserved_Success() {
+func (suite *AccountUnitTestSuite) TestUseReserved_Success() {
 	acc, _ := account.NewAccount(suite.propsFaker, idObjValue.Uuid)
 	_ = acc.Credit("USDT", 100)
 	_ = acc.Reserve("USDT", 60)
@@ -76,7 +76,7 @@ func (suite *AccountTestSuite) TestUseReserved_Success() {
 	assert.Equal(suite.T(), int64(10), acc.Balances["USDT"].Reserved)
 }
 
-func (suite *AccountTestSuite) TestUseReserved_ErrorOnInsufficientReserved() {
+func (suite *AccountUnitTestSuite) TestUseReserved_ErrorOnInsufficientReserved() {
 	acc, _ := account.NewAccount(suite.propsFaker, idObjValue.Uuid)
 	_ = acc.Credit("USDT", 100)
 	_ = acc.Reserve("USDT", 60)
@@ -84,7 +84,7 @@ func (suite *AccountTestSuite) TestUseReserved_ErrorOnInsufficientReserved() {
 	assert.ErrorIs(suite.T(), err, account.ErrInsufficient)
 }
 
-func (suite *AccountTestSuite) TestReleaseReserved_Success() {
+func (suite *AccountUnitTestSuite) TestReleaseReserved_Success() {
 	acc, _ := account.NewAccount(suite.propsFaker, idObjValue.Uuid)
 	_ = acc.Credit("BRL", 100)
 	_ = acc.Reserve("BRL", 40)
@@ -94,7 +94,7 @@ func (suite *AccountTestSuite) TestReleaseReserved_Success() {
 	assert.Equal(suite.T(), int64(10), acc.Balances["BRL"].Reserved)
 }
 
-func (suite *AccountTestSuite) TestReleaseReserved_ErrorOnInsufficientReserved() {
+func (suite *AccountUnitTestSuite) TestReleaseReserved_ErrorOnInsufficientReserved() {
 	acc, _ := account.NewAccount(suite.propsFaker, idObjValue.Uuid)
 	_ = acc.Credit("BRL", 100)
 	_ = acc.Reserve("BRL", 40)
@@ -102,7 +102,7 @@ func (suite *AccountTestSuite) TestReleaseReserved_ErrorOnInsufficientReserved()
 	assert.ErrorIs(suite.T(), err, account.ErrInsufficient)
 }
 
-func (suite *AccountTestSuite) TestReserve_ErrorOnZeroOrNegativeAmount() {
+func (suite *AccountUnitTestSuite) TestReserve_ErrorOnZeroOrNegativeAmount() {
 	acc, _ := account.NewAccount(suite.propsFaker, idObjValue.Uuid)
 
 	err := acc.Reserve("BTC", 0)
@@ -112,21 +112,21 @@ func (suite *AccountTestSuite) TestReserve_ErrorOnZeroOrNegativeAmount() {
 	suite.Equal(account.ErrInvalidParam, err)
 }
 
-func (suite *AccountTestSuite) TestUseReserved_ErrorOnNegativeAmount() {
+func (suite *AccountUnitTestSuite) TestUseReserved_ErrorOnNegativeAmount() {
 	acc, _ := account.NewAccount(suite.propsFaker, idObjValue.Uuid)
 
 	err := acc.UseReserved("BTC", -1)
 	suite.Equal(account.ErrInvalidParam, err)
 }
 
-func (suite *AccountTestSuite) TestReleaseReserved_ErrorOnNegativeAmount() {
+func (suite *AccountUnitTestSuite) TestReleaseReserved_ErrorOnNegativeAmount() {
 	acc, _ := account.NewAccount(suite.propsFaker, idObjValue.Uuid)
 
 	err := acc.ReleaseReserved("BTC", -1)
 	suite.Equal(account.ErrInvalidParam, err)
 }
 
-func (suite *AccountTestSuite) TestNewAccount_Valid() {
+func (suite *AccountUnitTestSuite) TestNewAccount_Valid() {
 	props := account.AccountProps{Name: "user1"}
 	acc, err := account.NewAccount(props, idObjValue.Uuid)
 	suite.NoError(err)
@@ -136,7 +136,7 @@ func (suite *AccountTestSuite) TestNewAccount_Valid() {
 	suite.NotNil(acc.Balances)
 }
 
-func (suite *AccountTestSuite) TestNewAccount_InvalidName() {
+func (suite *AccountUnitTestSuite) TestNewAccount_InvalidName() {
 	props := account.AccountProps{Name: ""}
 	acc, err := account.NewAccount(props, idObjValue.Uuid)
 	suite.ErrorIs(err, account.ErrInvalidParam)
@@ -144,5 +144,5 @@ func (suite *AccountTestSuite) TestNewAccount_InvalidName() {
 }
 
 func TestSuite(t *testing.T) {
-	suite.Run(t, new(AccountTestSuite))
+	suite.Run(t, new(AccountUnitTestSuite))
 }
