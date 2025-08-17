@@ -4,29 +4,27 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"strings"
 
+	accountUsecases "github.com/juninhoitabh/clob-go/internal/application/account/usecases"
 	domainAccount "github.com/juninhoitabh/clob-go/internal/domain/account"
 	"github.com/juninhoitabh/clob-go/internal/shared"
-	idObjValue "github.com/juninhoitabh/clob-go/internal/shared/domain/value-objects/id"
 )
-
-type AccountController struct {
-	accountRepo domainAccount.IAccountRepository
-	accountDAO  domainAccount.IAccountDAO
-}
 
 type (
 	createReq struct {
-		AccountID string `json:"account_id"`
+		AccountName string `json:"account_name"`
 	}
 	creditReq struct {
 		Asset  string `json:"asset"`
 		Amount int64  `json:"amount"`
 	}
+	AccountController struct {
+		createAccountUseCase accountUsecases.ICreateAccountUseCase
+		creditAccountUseCase accountUsecases.ICreditAccountUseCase
+		accountDAO           domainAccount.IAccountDAO
+	}
 )
 
-// TODO: fazer um usecase
 func (a *AccountController) Create(w http.ResponseWriter, req *http.Request) {
 	var body createReq
 	if err := json.NewDecoder(req.Body).Decode(&body); err != nil {
@@ -35,29 +33,28 @@ func (a *AccountController) Create(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if body.AccountID == "" {
+	if body.AccountName == "" {
 		http.Error(w, "account_id required", http.StatusBadRequest)
 
 		return
 	}
 
-	account, err := domainAccount.NewAccount(domainAccount.AccountProps{
-		Name: body.AccountID,
-	}, idObjValue.Uuid)
+	createAccountOutput, err := a.createAccountUseCase.Execute(accountUsecases.CreateAccountInput{
+		AccountName: body.AccountName,
+	})
 	if err != nil {
+		if errors.Is(err, shared.ErrAlreadyExists) {
+			shared.WriteJSON(w, http.StatusOK, map[string]any{"status": "exists"})
+
+			return
+		}
+
 		http.Error(w, err.Error(), http.StatusBadRequest)
 
 		return
 	}
 
-	created := a.accountRepo.Create(account)
-	if created {
-		shared.WriteJSON(w, http.StatusCreated, map[string]any{"status": "created"})
-		return
-	}
-
-	// TODO: retornar id
-	shared.WriteJSON(w, http.StatusOK, map[string]any{"status": "exists"})
+	shared.WriteJSON(w, http.StatusCreated, map[string]any{"account_id": createAccountOutput.ID})
 }
 
 func (a *AccountController) Get(w http.ResponseWriter, req *http.Request) {
@@ -79,11 +76,11 @@ func (a *AccountController) Get(w http.ResponseWriter, req *http.Request) {
 	shared.WriteJSON(w, http.StatusOK, acct)
 }
 
-// TODO: fazer u usecase
 func (a *AccountController) Credit(w http.ResponseWriter, req *http.Request) {
 	id := req.PathValue("id")
 	if id == "" {
 		http.Error(w, "missing account id", http.StatusBadRequest)
+
 		return
 	}
 
@@ -100,7 +97,11 @@ func (a *AccountController) Credit(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	acct, err := a.accountRepo.Get(id)
+	err := a.creditAccountUseCase.Execute(accountUsecases.CreditAccountInput{
+		AccountID: id,
+		Asset:     body.Asset,
+		Amount:    body.Amount,
+	})
 	if err != nil {
 		status := http.StatusBadRequest
 
@@ -110,19 +111,6 @@ func (a *AccountController) Credit(w http.ResponseWriter, req *http.Request) {
 
 		http.Error(w, err.Error(), status)
 
-		return
-	}
-
-	acct.Credit(strings.ToUpper(body.Asset), body.Amount)
-
-	if err := a.accountRepo.Save(acct); err != nil {
-		status := http.StatusBadRequest
-
-		if errors.Is(err, shared.ErrNotFound) {
-			status = http.StatusNotFound
-		}
-
-		http.Error(w, err.Error(), status)
 		return
 	}
 
