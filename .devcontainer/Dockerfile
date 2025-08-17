@@ -18,7 +18,8 @@ RUN go install -v golang.org/x/tools/gopls@latest && \
   go install -v github.com/haya14busa/goplay/cmd/goplay@latest && \
   go install -v github.com/masahiro331/go-commitlinter@0.1.0 && \
   go install -v github.com/automation-co/husky@latest && \
-  go install -v github.com/swaggo/swag/cmd/swag@latest
+  go install -v github.com/swaggo/swag/cmd/swag@latest && \
+  go install -v github.com/golang/mock/mockgen@latest
 
 ENV HOME=/home/go
 ENV ZSH_CUSTOM=${HOME}/.oh-my-zsh
