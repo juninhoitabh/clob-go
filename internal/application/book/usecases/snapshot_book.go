@@ -6,14 +6,6 @@ import (
 )
 
 type (
-	SnapshotBookInput struct {
-		Instrument string
-	}
-	SnapshotBookOutput struct {
-		Instrument string
-		Bids       []Level
-		Asks       []Level
-	}
 	Level struct {
 		Price int64
 		Qty   int64
