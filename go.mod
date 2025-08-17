@@ -4,7 +4,6 @@ go 1.25.0
 
 require (
 	github.com/brianvoe/gofakeit/v7 v7.3.0
-	github.com/google/uuid v1.6.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/stretchr/testify v1.10.0
 	go.mongodb.org/mongo-driver v1.17.4
