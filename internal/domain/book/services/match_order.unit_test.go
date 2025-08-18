@@ -1,3 +1,5 @@
+//go:build all || unit || domain
+
 package services_test
 
 import (
