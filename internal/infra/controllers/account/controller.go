@@ -19,9 +19,8 @@ type (
 		Amount int64  `json:"amount"`
 	}
 	AccountController struct {
-		createAccountUseCase accountUsecases.ICreateAccountUseCase
-		creditAccountUseCase accountUsecases.ICreditAccountUseCase
-		accountDAO           domainAccount.IAccountDAO
+		accountDAO  domainAccount.IAccountDAO
+		accountRepo domainAccount.IAccountRepository
 	}
 )
 
@@ -39,7 +38,9 @@ func (a *AccountController) Create(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	createAccountOutput, err := a.createAccountUseCase.Execute(accountUsecases.CreateAccountInput{
+	createAccountUseCase := accountUsecases.NewCreateAccountUseCase(a.accountRepo)
+
+	createAccountOutput, err := createAccountUseCase.Execute(accountUsecases.CreateAccountInput{
 		AccountName: body.AccountName,
 	})
 	if err != nil {
@@ -97,7 +98,9 @@ func (a *AccountController) Credit(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	err := a.creditAccountUseCase.Execute(accountUsecases.CreditAccountInput{
+	creditAccountUseCase := accountUsecases.NewCreditAccountUseCase(a.accountRepo)
+
+	err := creditAccountUseCase.Execute(accountUsecases.CreditAccountInput{
 		AccountID: id,
 		Asset:     body.Asset,
 		Amount:    body.Amount,
@@ -115,4 +118,14 @@ func (a *AccountController) Credit(w http.ResponseWriter, req *http.Request) {
 	}
 
 	shared.WriteJSON(w, http.StatusOK, map[string]any{"status": "ok"})
+}
+
+func NewAccountController(
+	accountDAO domainAccount.IAccountDAO,
+	accountRepo domainAccount.IAccountRepository,
+) *AccountController {
+	return &AccountController{
+		accountDAO:  accountDAO,
+		accountRepo: accountRepo,
+	}
 }
