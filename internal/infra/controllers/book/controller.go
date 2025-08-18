@@ -6,14 +6,15 @@ import (
 	"strings"
 
 	bookUsecases "github.com/juninhoitabh/clob-go/internal/application/book/usecases"
+	domainBook "github.com/juninhoitabh/clob-go/internal/domain/book"
 	"github.com/juninhoitabh/clob-go/internal/shared"
 )
 
 type BookController struct {
-	snapshotBookUseCase bookUsecases.ISnapshotBookUseCase
+	bookRepo domainBook.IBookRepository
 }
 
-func (b *BookController) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (b *BookController) Get(w http.ResponseWriter, req *http.Request) {
 	inst := req.PathValue("instrument")
 
 	inst = strings.ToUpper(inst)
@@ -23,7 +24,9 @@ func (b *BookController) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	book, err := b.snapshotBookUseCase.Execute(bookUsecases.SnapshotBookInput{
+	snapshotBookUseCase := bookUsecases.NewSnapshotBookUseCase(b.bookRepo)
+
+	book, err := snapshotBookUseCase.Execute(bookUsecases.SnapshotBookInput{
 		Instrument: inst,
 	})
 	if err != nil {
@@ -45,4 +48,12 @@ func (b *BookController) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 
 	shared.WriteJSON(w, http.StatusOK, book)
+}
+
+func NewBookController(
+	bookRepo domainBook.IBookRepository,
+) *BookController {
+	return &BookController{
+		bookRepo: bookRepo,
+	}
 }
