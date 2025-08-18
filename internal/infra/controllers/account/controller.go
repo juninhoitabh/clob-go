@@ -33,7 +33,7 @@ func (a *AccountController) Create(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if body.AccountName == "" {
-		http.Error(w, "account_id required", http.StatusBadRequest)
+		http.Error(w, "account_name required", http.StatusBadRequest)
 
 		return
 	}
