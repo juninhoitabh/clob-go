@@ -298,4 +298,5 @@ func (suite *CancelOrderUseCaseUnitTestSuite) TestExecute_SaveBookError() {
 
 func TestSuite(t *testing.T) {
 	suite.Run(t, new(CancelOrderUseCaseUnitTestSuite))
+	suite.Run(t, new(PlaceOrderUseCaseUnitTestSuite))
 }

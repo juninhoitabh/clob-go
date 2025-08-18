@@ -11,17 +11,6 @@ import (
 )
 
 type (
-	PlaceOrderInput struct {
-		AccountID  string
-		Instrument string
-		Side       string
-		Price      int64
-		Qty        int64
-	}
-	PlaceOrderOutput struct {
-		Order       *domainOrder.Order
-		TradeReport *services.TradeReport
-	}
 	PlaceOrderUseCase struct {
 		BookRepo    domainBook.IBookRepository
 		OrderRepo   domainOrder.IOrderRepository
@@ -76,7 +65,10 @@ func (p *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, e
 		return nil, err
 	}
 
-	p.OrderRepo.SaveOrder(order)
+	err = p.OrderRepo.SaveOrder(order)
+	if err != nil {
+		return nil, err
+	}
 
 	b, err := p.BookRepo.GetBook(input.Instrument)
 	if err != nil {
@@ -122,4 +114,16 @@ func (p *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, e
 		Order:       order,
 		TradeReport: report,
 	}, nil
+}
+
+func NewPlaceOrderUseCase(
+	bookRepo domainBook.IBookRepository,
+	orderRepo domainOrder.IOrderRepository,
+	accountRepo account.IAccountRepository,
+) *PlaceOrderUseCase {
+	return &PlaceOrderUseCase{
+		BookRepo:    bookRepo,
+		OrderRepo:   orderRepo,
+		AccountRepo: accountRepo,
+	}
 }
