@@ -1,3 +1,5 @@
+//go:build all || unit || usecase
+
 package usecases_test
 
 import (
