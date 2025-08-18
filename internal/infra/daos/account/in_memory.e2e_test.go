@@ -14,12 +14,12 @@ import (
 	"github.com/juninhoitabh/clob-go/internal/shared"
 )
 
-type InMemoryAccountDAOUnitTestSuite struct {
+type InMemoryAccountDAOE2ETestSuite struct {
 	suite.Suite
 	dao *daosAccount.InMemoryAccountDAO
 }
 
-func (suite *InMemoryAccountDAOUnitTestSuite) SetupTest() {
+func (suite *InMemoryAccountDAOE2ETestSuite) SetupTest() {
 	mu := &sync.Mutex{}
 	accounts := map[string]*account.Account{
 		"acc1": {
@@ -32,7 +32,7 @@ func (suite *InMemoryAccountDAOUnitTestSuite) SetupTest() {
 	suite.dao = daosAccount.NewInMemoryAccountDAO(mu, accounts)
 }
 
-func (suite *InMemoryAccountDAOUnitTestSuite) TestSnapshot_Success() {
+func (suite *InMemoryAccountDAOE2ETestSuite) TestSnapshot_Success() {
 	snap, err := suite.dao.Snapshot("acc1")
 	assert.NoError(suite.T(), err)
 	assert.NotNil(suite.T(), snap)
@@ -43,12 +43,12 @@ func (suite *InMemoryAccountDAOUnitTestSuite) TestSnapshot_Success() {
 	assert.Equal(suite.T(), int64(0), snap.Balances["USDT"].Reserved)
 }
 
-func (suite *InMemoryAccountDAOUnitTestSuite) TestSnapshot_NotFound() {
+func (suite *InMemoryAccountDAOE2ETestSuite) TestSnapshot_NotFound() {
 	snap, err := suite.dao.Snapshot("unknown")
 	assert.ErrorIs(suite.T(), err, shared.ErrNotFound)
 	assert.Nil(suite.T(), snap)
 }
 
 func TestSuite(t *testing.T) {
-	suite.Run(t, new(InMemoryAccountDAOUnitTestSuite))
+	suite.Run(t, new(InMemoryAccountDAOE2ETestSuite))
 }
