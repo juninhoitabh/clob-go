@@ -1,4 +1,4 @@
-//go:build all || unit || infra
+//go:build all || e2e || infra
 
 package repositories_test
 
@@ -14,16 +14,16 @@ import (
 	"github.com/juninhoitabh/clob-go/internal/shared"
 )
 
-type InMemoryAccountRepositoryUnitTestSuite struct {
+type InMemoryAccountRepositoryE2ETestSuite struct {
 	suite.Suite
 	repo *repositoriesAccount.InMemoryAccountRepository
 }
 
-func (suite *InMemoryAccountRepositoryUnitTestSuite) SetupTest() {
+func (suite *InMemoryAccountRepositoryE2ETestSuite) SetupTest() {
 	suite.repo = repositoriesAccount.NewInMemoryAccountRepository()
 }
 
-func (suite *InMemoryAccountRepositoryUnitTestSuite) TestCreateAndGet_Success() {
+func (suite *InMemoryAccountRepositoryE2ETestSuite) TestCreateAndGet_Success() {
 	account, _ := domainAccount.NewAccount(domainAccount.AccountProps{Name: "Alice"}, "acc1")
 	err := suite.repo.Create(account)
 	assert.NoError(suite.T(), err)
@@ -33,14 +33,14 @@ func (suite *InMemoryAccountRepositoryUnitTestSuite) TestCreateAndGet_Success() 
 	assert.Equal(suite.T(), account, got)
 }
 
-func (suite *InMemoryAccountRepositoryUnitTestSuite) TestCreate_AlreadyExistsByID() {
+func (suite *InMemoryAccountRepositoryE2ETestSuite) TestCreate_AlreadyExistsByID() {
 	account, _ := domainAccount.NewAccount(domainAccount.AccountProps{Name: "Bob"}, "acc2")
 	_ = suite.repo.Create(account)
 	err := suite.repo.Create(account)
 	assert.ErrorIs(suite.T(), err, shared.ErrAlreadyExists)
 }
 
-func (suite *InMemoryAccountRepositoryUnitTestSuite) TestCreate_AlreadyExistsByName() {
+func (suite *InMemoryAccountRepositoryE2ETestSuite) TestCreate_AlreadyExistsByName() {
 	account1, _ := domainAccount.NewAccount(domainAccount.AccountProps{Name: "Carol"}, "acc3")
 	account2, _ := domainAccount.NewAccount(domainAccount.AccountProps{Name: "Carol"}, "acc4")
 	_ = suite.repo.Create(account1)
@@ -48,13 +48,13 @@ func (suite *InMemoryAccountRepositoryUnitTestSuite) TestCreate_AlreadyExistsByN
 	assert.ErrorIs(suite.T(), err, shared.ErrAlreadyExists)
 }
 
-func (suite *InMemoryAccountRepositoryUnitTestSuite) TestGet_NotFound() {
+func (suite *InMemoryAccountRepositoryE2ETestSuite) TestGet_NotFound() {
 	got, err := suite.repo.Get("unknown")
 	assert.ErrorIs(suite.T(), err, shared.ErrNotFound)
 	assert.Nil(suite.T(), got)
 }
 
-func (suite *InMemoryAccountRepositoryUnitTestSuite) TestSave_UpdatesAccount() {
+func (suite *InMemoryAccountRepositoryE2ETestSuite) TestSave_UpdatesAccount() {
 	account, _ := domainAccount.NewAccount(domainAccount.AccountProps{Name: "Dave"}, "Uuid")
 	_ = suite.repo.Create(account)
 	account.Name = "DaveUpdated"
@@ -65,7 +65,7 @@ func (suite *InMemoryAccountRepositoryUnitTestSuite) TestSave_UpdatesAccount() {
 	assert.Equal(suite.T(), "DaveUpdated", got.Name)
 }
 
-func (suite *InMemoryAccountRepositoryUnitTestSuite) TestCreate_DuplicateName() {
+func (suite *InMemoryAccountRepositoryE2ETestSuite) TestCreate_DuplicateName() {
 	account1, _ := domainAccount.NewAccount(domainAccount.AccountProps{Name: "Alice"}, "Uuid")
 	account2, _ := domainAccount.NewAccount(domainAccount.AccountProps{Name: "Alice"}, "Uuid")
 	err := suite.repo.Create(account1)
@@ -74,7 +74,7 @@ func (suite *InMemoryAccountRepositoryUnitTestSuite) TestCreate_DuplicateName() 
 	assert.ErrorIs(suite.T(), err, shared.ErrAlreadyExists)
 }
 
-func (suite *InMemoryAccountRepositoryUnitTestSuite) TestAccountsMap() {
+func (suite *InMemoryAccountRepositoryE2ETestSuite) TestAccountsMap() {
 	account, _ := domainAccount.NewAccount(domainAccount.AccountProps{Name: "Bob"}, "Uuid")
 	_ = suite.repo.Create(account)
 	accountsMap := suite.repo.AccountsMap()
@@ -82,11 +82,11 @@ func (suite *InMemoryAccountRepositoryUnitTestSuite) TestAccountsMap() {
 	assert.Equal(suite.T(), account, accountsMap[account.GetID()])
 }
 
-func (suite *InMemoryAccountRepositoryUnitTestSuite) TestMutex() {
+func (suite *InMemoryAccountRepositoryE2ETestSuite) TestMutex() {
 	mutex := suite.repo.Mutex()
 	assert.IsType(suite.T(), &sync.Mutex{}, mutex)
 }
 
 func TestSuite(t *testing.T) {
-	suite.Run(t, new(InMemoryAccountRepositoryUnitTestSuite))
+	suite.Run(t, new(InMemoryAccountRepositoryE2ETestSuite))
 }
