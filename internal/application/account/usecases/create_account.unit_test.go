@@ -2,7 +2,6 @@ package usecases_test
 
 import (
 	"errors"
-	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -35,8 +34,6 @@ func (suite *CreateAccountUseCaseUnitTestSuite) TearDownTest() {
 
 func (suite *CreateAccountUseCaseUnitTestSuite) TestExecute_Success() {
 	input := suite.inputFaker
-
-	// Cria entidade real para ser retornada
 	account, _ := domainAccount.NewAccount(domainAccount.AccountProps{Name: input.AccountName}, "Uuid")
 
 	suite.accountRepo.EXPECT().Create(gomock.Any()).Return(nil)
@@ -50,7 +47,7 @@ func (suite *CreateAccountUseCaseUnitTestSuite) TestExecute_Success() {
 
 func (suite *CreateAccountUseCaseUnitTestSuite) TestExecute_DomainError() {
 	input := suite.inputFaker
-	input.AccountName = "" // força erro de domínio
+	input.AccountName = ""
 
 	output, err := suite.usecase.Execute(input)
 	assert.Error(suite.T(), err)
@@ -65,8 +62,4 @@ func (suite *CreateAccountUseCaseUnitTestSuite) TestExecute_RepoError() {
 	output, err := suite.usecase.Execute(input)
 	assert.Error(suite.T(), err)
 	assert.Nil(suite.T(), output)
-}
-
-func TestSuite(t *testing.T) {
-	suite.Run(t, new(CreateAccountUseCaseUnitTestSuite))
 }
