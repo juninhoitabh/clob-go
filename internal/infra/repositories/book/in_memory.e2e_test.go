@@ -1,4 +1,4 @@
-//go:build all || unit || infra
+//go:build all || e2e || infra
 
 package repositories_test
 
@@ -11,16 +11,16 @@ import (
 	repositoriesBook "github.com/juninhoitabh/clob-go/internal/infra/repositories/book"
 )
 
-type InMemoryBookRepositoryE2eTestSuite struct {
+type InMemoryBookRepositoryE2ETestSuite struct {
 	suite.Suite
 	repo *repositoriesBook.InMemoryBookRepository
 }
 
-func (suite *InMemoryBookRepositoryE2eTestSuite) SetupTest() {
+func (suite *InMemoryBookRepositoryE2ETestSuite) SetupTest() {
 	suite.repo = repositoriesBook.NewInMemoryBookRepository()
 }
 
-func (suite *InMemoryBookRepositoryE2eTestSuite) TestSaveAndGetBook_Success() {
+func (suite *InMemoryBookRepositoryE2ETestSuite) TestSaveAndGetBook_Success() {
 	book := &domainBook.Book{
 		Instrument: "BTC/USDT",
 	}
@@ -32,13 +32,13 @@ func (suite *InMemoryBookRepositoryE2eTestSuite) TestSaveAndGetBook_Success() {
 	suite.Equal(book, got)
 }
 
-func (suite *InMemoryBookRepositoryE2eTestSuite) TestGetBook_NotFound() {
+func (suite *InMemoryBookRepositoryE2ETestSuite) TestGetBook_NotFound() {
 	got, err := suite.repo.GetBook("ETH/USDT")
 	suite.NoError(err)
 	suite.Nil(got)
 }
 
-func (suite *InMemoryBookRepositoryE2eTestSuite) TestSaveBook_Overwrite() {
+func (suite *InMemoryBookRepositoryE2ETestSuite) TestSaveBook_Overwrite() {
 	book1 := &domainBook.Book{Instrument: "BTC/USDT"}
 	book2 := &domainBook.Book{Instrument: "BTC/USDT"}
 
@@ -50,5 +50,5 @@ func (suite *InMemoryBookRepositoryE2eTestSuite) TestSaveBook_Overwrite() {
 }
 
 func TestSuite(t *testing.T) {
-	suite.Run(t, new(InMemoryBookRepositoryE2eTestSuite))
+	suite.Run(t, new(InMemoryBookRepositoryE2ETestSuite))
 }
