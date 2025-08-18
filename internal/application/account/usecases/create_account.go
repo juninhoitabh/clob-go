@@ -29,3 +29,11 @@ func (c *CreateAccountUseCase) Execute(input CreateAccountInput) (*CreateAccount
 		Name: account.Name,
 	}, nil
 }
+
+func NewCreateAccountUseCase(
+	accountRepo domainAccount.IAccountRepository,
+) *CreateAccountUseCase {
+	return &CreateAccountUseCase{
+		accountRepo: accountRepo,
+	}
+}
