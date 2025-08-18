@@ -51,3 +51,11 @@ func (s *SnapshotBookUseCase) Execute(input SnapshotBookInput) (*SnapshotBookOut
 
 	return out, nil
 }
+
+func NewSnapshotBookUseCase(
+	bookRepo domainBook.IBookRepository,
+) *SnapshotBookUseCase {
+	return &SnapshotBookUseCase{
+		BookRepo: bookRepo,
+	}
+}
