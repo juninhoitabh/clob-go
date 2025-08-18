@@ -12,10 +12,6 @@ type InMemoryAccountDAO struct {
 	accounts map[string]*account.Account
 }
 
-func NewInMemoryAccountDAO(mu *sync.Mutex, accounts map[string]*account.Account) *InMemoryAccountDAO {
-	return &InMemoryAccountDAO{mu: mu, accounts: accounts}
-}
-
 func (dao *InMemoryAccountDAO) Snapshot(id string) (*account.AccountSnapshot, error) {
 	dao.mu.Lock()
 	defer dao.mu.Unlock()
@@ -38,4 +34,8 @@ func (dao *InMemoryAccountDAO) Snapshot(id string) (*account.AccountSnapshot, er
 	}
 
 	return out, nil
+}
+
+func NewInMemoryAccountDAO(mu *sync.Mutex, accounts map[string]*account.Account) *InMemoryAccountDAO {
+	return &InMemoryAccountDAO{mu: mu, accounts: accounts}
 }
