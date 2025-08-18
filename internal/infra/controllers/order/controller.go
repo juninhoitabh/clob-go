@@ -7,12 +7,16 @@ import (
 	"strings"
 
 	orderUsecases "github.com/juninhoitabh/clob-go/internal/application/order/usecases"
+	"github.com/juninhoitabh/clob-go/internal/domain/account"
+	domainBook "github.com/juninhoitabh/clob-go/internal/domain/book"
+	domainOrder "github.com/juninhoitabh/clob-go/internal/domain/order"
 	"github.com/juninhoitabh/clob-go/internal/shared"
 )
 
 type OrderController struct {
-	cancelOrderUseCase orderUsecases.ICancelOrderUseCase
-	placeOrderUseCase  orderUsecases.IPlaceOrderUseCase
+	bookRepo    domainBook.IBookRepository
+	orderRepo   domainOrder.IOrderRepository
+	accountRepo account.IAccountRepository
 }
 
 type placeReq struct {
@@ -20,7 +24,7 @@ type placeReq struct {
 	Instrument string `json:"instrument"`
 	Side       string `json:"side"` // "buy" or "sell"
 	Price      int64  `json:"price"`
-	Qty        int64  `json:"qty"` // TODO: tem que ser float64??
+	Qty        int64  `json:"qty"`
 }
 
 func (o *OrderController) Place(w http.ResponseWriter, req *http.Request) {
@@ -45,7 +49,9 @@ func (o *OrderController) Place(w http.ResponseWriter, req *http.Request) {
 		Qty:        body.Qty,
 	}
 
-	placeOrderOutput, err := o.placeOrderUseCase.Execute(placeOrderInput)
+	placeOrderUseCase := orderUsecases.NewPlaceOrderUseCase(o.bookRepo, o.orderRepo, o.accountRepo)
+
+	placeOrderOutput, err := placeOrderUseCase.Execute(placeOrderInput)
 	if err != nil {
 		status := http.StatusBadRequest
 
@@ -71,11 +77,13 @@ func (o *OrderController) Cancel(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	cancelOrderUseCase := orderUsecases.NewCancelOrderUseCase(o.bookRepo, o.orderRepo, o.accountRepo)
+
 	cancelOrderInput := orderUsecases.CancelOrderInput{
 		OrderID: oid,
 	}
 
-	cancelOrderOutput, err := o.cancelOrderUseCase.Execute(cancelOrderInput)
+	cancelOrderOutput, err := cancelOrderUseCase.Execute(cancelOrderInput)
 	if err != nil {
 		status := http.StatusBadRequest
 
@@ -89,4 +97,16 @@ func (o *OrderController) Cancel(w http.ResponseWriter, req *http.Request) {
 	}
 
 	shared.WriteJSON(w, http.StatusOK, map[string]any{"order": cancelOrderOutput.Order.Public(), "status": "canceled"})
+}
+
+func NewOrderController(
+	bookRepo domainBook.IBookRepository,
+	orderRepo domainOrder.IOrderRepository,
+	accountRepo account.IAccountRepository,
+) *OrderController {
+	return &OrderController{
+		bookRepo:    bookRepo,
+		orderRepo:   orderRepo,
+		accountRepo: accountRepo,
+	}
 }
