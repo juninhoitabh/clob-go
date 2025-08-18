@@ -14,6 +14,7 @@ import (
 	domainOrder "github.com/juninhoitabh/clob-go/internal/domain/order"
 	"github.com/juninhoitabh/clob-go/internal/infra/repositories/book/mocks"
 	"github.com/juninhoitabh/clob-go/internal/shared"
+	idObjValue "github.com/juninhoitabh/clob-go/internal/shared/domain/value-objects/id"
 )
 
 type SnapshotBookUseCaseUnitTestSuite struct {
@@ -38,17 +39,13 @@ func (suite *SnapshotBookUseCaseUnitTestSuite) TearDownTest() {
 func (suite *SnapshotBookUseCaseUnitTestSuite) TestExecute_Success() {
 	input := suite.inputFaker
 
-	// Cria um book real e adiciona bids/asks
 	mockBook := &domainBook.Book{
 		Instrument: input.Instrument,
 	}
-	// Inicializa os mapas
-	mockBook.Prepare("Uuid")
-	// Adiciona bids
+	mockBook.Prepare(idObjValue.Uuid)
 	mockBook.AddOrder(&domainOrder.Order{Side: domainOrder.Buy, Price: 100, Remaining: 5})
 	mockBook.AddOrder(&domainOrder.Order{Side: domainOrder.Buy, Price: 100, Remaining: 3})
 	mockBook.AddOrder(&domainOrder.Order{Side: domainOrder.Buy, Price: 99, Remaining: 2})
-	// Adiciona asks
 	mockBook.AddOrder(&domainOrder.Order{Side: domainOrder.Sell, Price: 101, Remaining: 4})
 	mockBook.AddOrder(&domainOrder.Order{Side: domainOrder.Sell, Price: 102, Remaining: 1})
 
