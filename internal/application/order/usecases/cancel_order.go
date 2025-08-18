@@ -33,7 +33,11 @@ func (c *CancelOrderUseCase) Execute(input CancelOrderInput) (*CancelOrderOutput
 	}
 
 	b.RemoveOrder(order)
-	c.BookRepo.SaveBook(b)
+
+	err = c.BookRepo.SaveBook(b)
+	if err != nil {
+		return nil, err
+	}
 
 	base, quote, err := domainBook.SplitInstrument(order.Instrument)
 	if err != nil {
@@ -62,7 +66,22 @@ func (c *CancelOrderUseCase) Execute(input CancelOrderInput) (*CancelOrderOutput
 	}
 
 	order.Remaining = 0
-	c.OrderRepo.SaveOrder(order)
+	err = c.OrderRepo.SaveOrder(order)
+	if err != nil {
+		return nil, err
+	}
 
 	return &CancelOrderOutput{Order: order}, nil
+}
+
+func NewCancelOrderUseCase(
+	bookRepo domainBook.IBookRepository,
+	orderRepo domainOrder.IOrderRepository,
+	accountRepo account.IAccountRepository,
+) *CancelOrderUseCase {
+	return &CancelOrderUseCase{
+		BookRepo:    bookRepo,
+		OrderRepo:   orderRepo,
+		AccountRepo: accountRepo,
+	}
 }
