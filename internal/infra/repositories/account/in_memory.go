@@ -57,6 +57,7 @@ func (i *InMemoryAccountRepository) Save(account *domainAccount.Account) error {
 
 	id := account.GetID()
 	i.accounts[id] = account
+
 	return nil
 }
 
