@@ -6,25 +6,25 @@ import (
 	"github.com/juninhoitabh/clob-go/internal/domain/order"
 )
 
-type InMemoryBookRepository struct {
+type InMemoryOrderRepository struct {
 	mu     sync.Mutex
 	orders map[string]*order.Order
 }
 
-func NewInMemoryBookRepository() *InMemoryBookRepository {
-	return &InMemoryBookRepository{
+func NewInMemoryOrderRepository() *InMemoryOrderRepository {
+	return &InMemoryOrderRepository{
 		orders: make(map[string]*order.Order),
 	}
 }
 
-func (r *InMemoryBookRepository) GetOrder(orderID string) (*order.Order, error) {
+func (r *InMemoryOrderRepository) GetOrder(orderID string) (*order.Order, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
 	return r.orders[orderID], nil
 }
 
-func (r *InMemoryBookRepository) SaveOrder(o *order.Order) error {
+func (r *InMemoryOrderRepository) SaveOrder(o *order.Order) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -33,7 +33,7 @@ func (r *InMemoryBookRepository) SaveOrder(o *order.Order) error {
 	return nil
 }
 
-func (r *InMemoryBookRepository) RemoveOrder(orderID string) error {
+func (r *InMemoryOrderRepository) RemoveOrder(orderID string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
