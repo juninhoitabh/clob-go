@@ -6,15 +6,24 @@ import (
 	"github.com/juninhoitabh/clob-go/internal/domain/order"
 )
 
+var (
+	instance *InMemoryOrderRepository
+	once     sync.Once
+)
+
 type InMemoryOrderRepository struct {
 	mu     sync.Mutex
 	orders map[string]*order.Order
 }
 
 func NewInMemoryOrderRepository() *InMemoryOrderRepository {
-	return &InMemoryOrderRepository{
-		orders: make(map[string]*order.Order),
-	}
+	once.Do(func() {
+		instance = &InMemoryOrderRepository{
+			orders: make(map[string]*order.Order),
+		}
+	})
+
+	return instance
 }
 
 func (r *InMemoryOrderRepository) GetOrder(orderID string) (*order.Order, error) {

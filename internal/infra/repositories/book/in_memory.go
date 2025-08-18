@@ -6,15 +6,24 @@ import (
 	"github.com/juninhoitabh/clob-go/internal/domain/book"
 )
 
+var (
+	instance *InMemoryBookRepository
+	once     sync.Once
+)
+
 type InMemoryBookRepository struct {
 	mu    sync.Mutex
 	books map[string]*book.Book
 }
 
 func NewInMemoryBookRepository() *InMemoryBookRepository {
-	return &InMemoryBookRepository{
-		books: make(map[string]*book.Book),
-	}
+	once.Do(func() {
+		instance = &InMemoryBookRepository{
+			books: make(map[string]*book.Book),
+		}
+	})
+
+	return instance
 }
 
 func (r *InMemoryBookRepository) GetBook(instrument string) (*book.Book, error) {

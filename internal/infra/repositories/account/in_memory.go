@@ -7,15 +7,24 @@ import (
 	"github.com/juninhoitabh/clob-go/internal/shared"
 )
 
+var (
+	instance *InMemoryAccountRepository
+	once     sync.Once
+)
+
 type InMemoryAccountRepository struct {
 	mu       sync.Mutex
 	accounts map[string]*domainAccount.Account
 }
 
 func NewInMemoryAccountRepository() *InMemoryAccountRepository {
-	return &InMemoryAccountRepository{
-		accounts: make(map[string]*domainAccount.Account),
-	}
+	once.Do(func() {
+		instance = &InMemoryAccountRepository{
+			accounts: make(map[string]*domainAccount.Account),
+		}
+	})
+
+	return instance
 }
 
 func (i *InMemoryAccountRepository) Create(account *domainAccount.Account) error {
