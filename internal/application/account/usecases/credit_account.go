@@ -16,11 +16,22 @@ func (c *CreditAccountUseCase) Execute(input CreditAccountInput) error {
 		return err
 	}
 
-	acct.Credit(input.Asset, input.Amount)
+	err = acct.Credit(input.Asset, input.Amount)
+	if err != nil {
+		return err
+	}
 
 	if err := c.accountRepo.Save(acct); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func NewCreditAccountUseCase(
+	accountRepo domainAccount.IAccountRepository,
+) *CreditAccountUseCase {
+	return &CreditAccountUseCase{
+		accountRepo: accountRepo,
+	}
 }
