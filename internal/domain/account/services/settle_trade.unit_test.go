@@ -4,7 +4,6 @@ package services_test
 
 import (
 	"errors"
-	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
@@ -202,8 +201,4 @@ type sellerWithCreditError struct {
 
 func (a *sellerWithCreditError) Credit(asset string, amount int64) error {
 	return account.ErrInvalidParam
-}
-
-func TestSuite(t *testing.T) {
-	suite.Run(t, new(SettleTradeUnitTestSuite))
 }
