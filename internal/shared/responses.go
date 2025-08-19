@@ -21,6 +21,7 @@ type ErrorResponse struct {
 func Mul(a, b int64) int64 { return a * b }
 
 func WriteJSON(w http.ResponseWriter, status int, v any) {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(v)
 }
