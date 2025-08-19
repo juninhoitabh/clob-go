@@ -45,6 +45,7 @@ func (suite *BaseEntityTestSuite) TestNewBaseEntityWithDefaultIDTypeObjectID() {
 
 	require.NotNil(t, baseEntity)
 	require.IsType(t, "string", baseEntity.ID.ID)
+	require.IsType(t, "string", baseEntity.GetID())
 }
 
 func (suite *BaseEntityTestSuite) TestNewBaseEntityWithSetID() {
