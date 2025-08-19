@@ -77,3 +77,8 @@ func (i *InMemoryAccountRepository) AccountsMap() map[string]*domainAccount.Acco
 func (i *InMemoryAccountRepository) Mutex() *sync.Mutex {
 	return &i.mu
 }
+
+func ResetInMemoryAccountRepository() {
+	once = sync.Once{}
+	instance = nil
+}

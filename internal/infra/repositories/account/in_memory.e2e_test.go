@@ -20,6 +20,7 @@ type InMemoryAccountRepositoryE2ETestSuite struct {
 }
 
 func (suite *InMemoryAccountRepositoryE2ETestSuite) SetupTest() {
+	repositoriesAccount.ResetInMemoryAccountRepository()
 	suite.repo = repositoriesAccount.NewInMemoryAccountRepository()
 }
 
