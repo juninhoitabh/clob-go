@@ -10,3 +10,7 @@ swagGenerate:
 # RUN Tests and Lint
 test-lint:
 	./gosweep.sh
+
+# Run Lint
+lint:
+	golangci-lint run ./...
