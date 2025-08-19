@@ -12,5 +12,5 @@ func BookGenerate(router *http.ServeMux, apiV1Prefix string) {
 
 	controller := controllerBook.NewBookController(bookRepo)
 
-	router.HandleFunc("GET "+apiV1Prefix+"/books/{instrument...}", controller.Get)
+	router.HandleFunc("GET "+apiV1Prefix+"/books", controller.Get)
 }
