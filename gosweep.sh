@@ -8,7 +8,7 @@ max_steps=3
 for dir in $(find . -maxdepth 10 -not -path './.git*' -not -path './.history*' -path '*/internal/*' -type d);
 do
 if ls $dir/*.go &> /dev/null; then
-    if [[ $dir != (*"helper-test"*|*"factories"*|*"validators"*|*"dtos"*|*"fakers"*|*"infra/cmd"*|*"infra/framework/database"*|*"middle-wares"*|*"shared/config"*) ]]; then
+    if [[ $dir != (*"dtos"*|*"fakers"*|*"infra/http-server"*|*"middle-wares"*|*"mocks"*) ]]; then
         echo "Running go test race $dir ... (1/$max_steps)"
         ENVIRONMENT=test go test -tags=all -v -short -race "$dir"
 
