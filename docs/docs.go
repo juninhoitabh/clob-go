@@ -178,6 +178,19 @@ const docTemplate = `{
                 }
             }
         },
+        "account.creditBalanceOutputDto": {
+            "type": "object",
+            "properties": {
+                "available": {
+                    "type": "integer",
+                    "example": 1000
+                },
+                "reserved": {
+                    "type": "integer",
+                    "example": 0
+                }
+            }
+        },
         "account.creditInputDto": {
             "type": "object",
             "required": [
@@ -205,7 +218,7 @@ const docTemplate = `{
                 "balances": {
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/definitions/account.getAllByIdBalanceOutputDto"
+                        "$ref": "#/definitions/account.creditBalanceOutputDto"
                     }
                 }
             }

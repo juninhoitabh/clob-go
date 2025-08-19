@@ -35,8 +35,8 @@ type (
 		Reserved  int64 `json:"reserved" example:"0"`
 	}
 	creditOutputDto struct {
-		AccountID string                                `json:"account_id" example:"123e4567-e89b-12d3-a456-426614174000"`
-		Balances  map[string]getAllByIdBalanceOutputDto `json:"balances"`
+		AccountID string                            `json:"account_id" example:"123e4567-e89b-12d3-a456-426614174000"`
+		Balances  map[string]creditBalanceOutputDto `json:"balances"`
 	}
 	AccountController struct {
 		accountDAO  domainAccount.IAccountDAO
@@ -171,6 +171,18 @@ func (a *AccountController) Credit(w http.ResponseWriter, req *http.Request) {
 	}
 
 	updatedAccount, _ := a.accountDAO.Snapshot(id)
+
+	creditOutputDtoResponse := creditOutputDto{
+		AccountID: updatedAccount.AccountID,
+		Balances:  make(map[string]creditBalanceOutputDto),
+	}
+
+	for asset, balance := range updatedAccount.Balances {
+		creditOutputDtoResponse.Balances[asset] = creditBalanceOutputDto{
+			Available: balance.Available,
+			Reserved:  balance.Reserved,
+		}
+	}
 
 	shared.WriteJSON(w, http.StatusOK, updatedAccount)
 }

@@ -16,6 +16,15 @@ definitions:
         example: created
         type: string
     type: object
+  account.creditBalanceOutputDto:
+    properties:
+      available:
+        example: 1000
+        type: integer
+      reserved:
+        example: 0
+        type: integer
+    type: object
   account.creditInputDto:
     properties:
       amount:
@@ -35,7 +44,7 @@ definitions:
         type: string
       balances:
         additionalProperties:
-          $ref: '#/definitions/account.getAllByIdBalanceOutputDto'
+          $ref: '#/definitions/account.creditBalanceOutputDto'
         type: object
     type: object
   account.getAllByIdBalanceOutputDto:
