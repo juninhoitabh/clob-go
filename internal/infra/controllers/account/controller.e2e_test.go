@@ -2,14 +2,17 @@ package account_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
+	httpAdapter "github.com/juninhoitabh/clob-go/internal/infra/http-client"
 	httpServer "github.com/juninhoitabh/clob-go/internal/infra/http-server"
 )
 
@@ -45,12 +48,14 @@ type (
 		suite.Suite
 		e2eTestHandle *httpServer.E2eTestHandle
 		basePath      string
+		httpClient    httpAdapter.HttpClient
 	}
 )
 
 func (suite *AccountControllerTestSuite) SetupTest() {
 	suite.e2eTestHandle = httpServer.NewE2eTestHandle()
 	suite.basePath = suite.e2eTestHandle.HttpServerTest.URL + "/api/v1/accounts"
+	suite.httpClient = httpAdapter.NewDefaultHttpClient(10 * time.Second)
 }
 
 func (suite *AccountControllerTestSuite) TearDownSuite() {
@@ -59,19 +64,18 @@ func (suite *AccountControllerTestSuite) TearDownSuite() {
 
 func (suite *AccountControllerTestSuite) TestCreate_Success() {
 	t := suite.Suite.T()
+	ctx := context.Background()
 
 	inputBody := createInputDtoTest{AccountName: "e2e-alice"}
-	dtoToSend, err := json.Marshal(inputBody)
-	require.NoError(t, err)
 
-	res, err := http.Post(suite.basePath, "application/json", bytes.NewReader(dtoToSend))
+	headers := map[string]string{"Content-Type": "application/json"}
+	res, err := suite.httpClient.Post(ctx, suite.basePath, inputBody, headers)
 	require.NoError(t, err)
-	defer res.Body.Close()
 
 	assert.Equal(t, http.StatusCreated, res.StatusCode)
 
 	var out createOutputDtoTest
-	err = json.NewDecoder(res.Body).Decode(&out)
+	err = json.Unmarshal(res.Body, &out)
 	require.NoError(t, err)
 	require.NotEmpty(t, out.AccountId)
 	assert.Equal(t, "created", out.Status)
