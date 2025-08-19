@@ -213,6 +213,14 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/account.createOutputDto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/shared.Errors'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/shared.Errors'
         "500":
           description: Internal Server Error
           schema:
@@ -239,6 +247,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/account.getAllByIdOutputDto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/shared.Errors'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/shared.Errors'
         "500":
           description: Internal Server Error
           schema:
@@ -271,6 +287,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/account.creditOutputDto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/shared.Errors'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/shared.Errors'
         "500":
           description: Internal Server Error
           schema:
@@ -278,14 +302,14 @@ paths:
       summary: Credit
       tags:
       - Accounts
-  /books/{instrument}:
+  /books:
     get:
       consumes:
       - application/json
       description: Get by Instrument
       parameters:
       - description: instrument
-        in: path
+        in: query
         name: instrument
         required: true
         type: string
@@ -296,6 +320,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/book.getByInstrumentOutputDto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/shared.Errors'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/shared.Errors'
         "500":
           description: Internal Server Error
           schema:
@@ -322,6 +354,14 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/order.placeOutputDto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/shared.Errors'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/shared.Errors'
         "500":
           description: Internal Server Error
           schema:
@@ -348,6 +388,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/order.cancelOutputDto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/shared.Errors'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/shared.Errors'
         "500":
           description: Internal Server Error
           schema:
