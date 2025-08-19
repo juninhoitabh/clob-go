@@ -55,17 +55,19 @@ func (suite *BookControllerTestSuite) TestGet_Success() {
 	var createAccountOut map[string]string
 	err = json.NewDecoder(createAccountRes.Body).Decode(&createAccountOut)
 	require.NoError(t, err)
-	accountID := createAccountOut["account_id"]
 
+	accountID := createAccountOut["account_id"]
 	creditInput := map[string]interface{}{
 		"asset":  "USDT",
 		"amount": 60000,
 	}
 	creditBody, err := json.Marshal(creditInput)
 	require.NoError(t, err)
+
 	creditURL := accountsPath + "/" + accountID + "/credit"
 	creditRes, err := http.Post(creditURL, "application/json", bytes.NewReader(creditBody))
 	require.NoError(t, err)
+
 	defer creditRes.Body.Close()
 
 	assert.Equal(t, http.StatusOK, creditRes.StatusCode)
@@ -94,6 +96,7 @@ func (suite *BookControllerTestSuite) TestGet_Success() {
 	getBookURL := suite.basePath + "?instrument=BTC/USDT"
 	getBookRes, err := http.Get(getBookURL)
 	require.NoError(t, err)
+
 	defer getBookRes.Body.Close()
 
 	assert.Equal(t, http.StatusOK, getBookRes.StatusCode)
@@ -123,6 +126,7 @@ func (suite *BookControllerTestSuite) TestGet_EmptyInstrument() {
 	getBookURL := suite.basePath
 	getBookRes, err := http.Get(getBookURL)
 	require.NoError(t, err)
+
 	defer getBookRes.Body.Close()
 
 	assert.Equal(t, http.StatusBadRequest, getBookRes.StatusCode)
@@ -134,6 +138,7 @@ func (suite *BookControllerTestSuite) TestGet_InstrumentNotFound() {
 	getBookURL := suite.basePath + "?instrument=ETH/DOGE"
 	getBookRes, err := http.Get(getBookURL)
 	require.NoError(t, err)
+
 	defer getBookRes.Body.Close()
 
 	assert.Equal(t, http.StatusNotFound, getBookRes.StatusCode)
@@ -154,17 +159,20 @@ func (suite *BookControllerTestSuite) TestGet_CaseInsensitiveInstrument() {
 	var createAccountOut map[string]string
 	err = json.NewDecoder(createAccountRes.Body).Decode(&createAccountOut)
 	require.NoError(t, err)
-	accountID := createAccountOut["account_id"]
 
+	accountID := createAccountOut["account_id"]
 	creditInput := map[string]interface{}{
 		"asset":  "BRL",
 		"amount": 60000,
 	}
 	creditBody, err := json.Marshal(creditInput)
 	require.NoError(t, err)
+
 	creditURL := accountsPath + "/" + accountID + "/credit"
-	_, err = http.Post(creditURL, "application/json", bytes.NewReader(creditBody))
+	response, err := http.Post(creditURL, "application/json", bytes.NewReader(creditBody))
 	require.NoError(t, err)
+
+	defer response.Body.Close()
 
 	ordersPath := suite.e2eTestHandle.HttpServerTest.URL + "/api/v1/orders"
 	createOrderInput := map[string]interface{}{
@@ -177,12 +185,15 @@ func (suite *BookControllerTestSuite) TestGet_CaseInsensitiveInstrument() {
 	createOrderBody, err := json.Marshal(createOrderInput)
 	require.NoError(t, err)
 
-	_, err = http.Post(ordersPath, "application/json", bytes.NewReader(createOrderBody))
+	response, err = http.Post(ordersPath, "application/json", bytes.NewReader(createOrderBody))
 	require.NoError(t, err)
+
+	defer response.Body.Close()
 
 	getBookURL := suite.basePath + "?instrument=btc/brl"
 	getBookRes, err := http.Get(getBookURL)
 	require.NoError(t, err)
+
 	defer getBookRes.Body.Close()
 
 	assert.Equal(t, http.StatusOK, getBookRes.StatusCode)
@@ -215,17 +226,19 @@ func (suite *BookControllerTestSuite) TestGet_WithAsks() {
 	var createAccountOut map[string]string
 	err = json.NewDecoder(createAccountRes.Body).Decode(&createAccountOut)
 	require.NoError(t, err)
-	accountID := createAccountOut["account_id"]
 
+	accountID := createAccountOut["account_id"]
 	creditInput := map[string]interface{}{
 		"asset":  "BTC",
 		"amount": 5,
 	}
 	creditBody, err := json.Marshal(creditInput)
 	require.NoError(t, err)
+
 	creditURL := accountsPath + "/" + accountID + "/credit"
 	creditRes, err := http.Post(creditURL, "application/json", bytes.NewReader(creditBody))
 	require.NoError(t, err)
+
 	defer creditRes.Body.Close()
 
 	assert.Equal(t, http.StatusOK, creditRes.StatusCode)
@@ -254,6 +267,7 @@ func (suite *BookControllerTestSuite) TestGet_WithAsks() {
 	getBookURL := suite.basePath + "?instrument=BTC/USDT"
 	getBookRes, err := http.Get(getBookURL)
 	require.NoError(t, err)
+
 	defer getBookRes.Body.Close()
 
 	assert.Equal(t, http.StatusOK, getBookRes.StatusCode)

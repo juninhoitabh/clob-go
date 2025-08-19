@@ -73,8 +73,8 @@ func (suite *OrderControllerTestSuite) setupAccount(name string, asset string, a
 	var createOut map[string]string
 	err = json.NewDecoder(createRes.Body).Decode(&createOut)
 	require.NoError(t, err)
-	accountID := createOut["account_id"]
 
+	accountID := createOut["account_id"]
 	creditInput := map[string]interface{}{
 		"asset":  asset,
 		"amount": amount,
@@ -85,6 +85,7 @@ func (suite *OrderControllerTestSuite) setupAccount(name string, asset string, a
 	creditURL := suite.accountsPath + "/" + accountID + "/credit"
 	creditRes, err := http.Post(creditURL, "application/json", bytes.NewReader(creditBody))
 	require.NoError(t, err)
+
 	defer creditRes.Body.Close()
 
 	return accountID
@@ -251,6 +252,7 @@ func (suite *OrderControllerTestSuite) TestCancel_Success() {
 	cancelURL := suite.basePath + "/" + orderID + "/cancel"
 	cancelRes, err := http.Post(cancelURL, "application/json", nil)
 	require.NoError(t, err)
+
 	defer cancelRes.Body.Close()
 
 	assert.Equal(t, http.StatusOK, cancelRes.StatusCode)
@@ -269,6 +271,7 @@ func (suite *OrderControllerTestSuite) TestCancel_OrderNotFound() {
 	cancelURL := suite.basePath + "/non-existent-order/cancel"
 	cancelRes, err := http.Post(cancelURL, "application/json", nil)
 	require.NoError(t, err)
+
 	defer cancelRes.Body.Close()
 
 	assert.Equal(t, http.StatusNotFound, cancelRes.StatusCode)

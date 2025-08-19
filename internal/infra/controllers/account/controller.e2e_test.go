@@ -100,11 +100,14 @@ func (suite *AccountControllerTestSuite) TestCreate_DuplicateName_ReturnsExists(
 
 	res, err := http.Post(suite.basePath, "application/json", bytes.NewReader(body))
 	require.NoError(t, err)
+
 	defer res.Body.Close()
+
 	assert.True(t, res.StatusCode == http.StatusCreated || res.StatusCode == http.StatusOK)
 
 	res2, err := http.Post(suite.basePath, "application/json", bytes.NewReader(body))
 	require.NoError(t, err)
+
 	defer res2.Body.Close()
 
 	assert.Equal(t, http.StatusOK, res2.StatusCode)
@@ -150,12 +153,15 @@ func (suite *AccountControllerTestSuite) TestGetAllById_Success() {
 	require.NoError(t, err)
 
 	creditURL := suite.basePath + "/" + createOut.AccountId + "/credit"
-	_, err = http.Post(creditURL, "application/json", bytes.NewReader(creditBody))
+	response, err := http.Post(creditURL, "application/json", bytes.NewReader(creditBody))
 	require.NoError(t, err)
+
+	defer response.Body.Close()
 
 	getURL := suite.basePath + "/" + createOut.AccountId
 	getRes, err := http.Get(getURL)
 	require.NoError(t, err)
+
 	defer getRes.Body.Close()
 
 	assert.Equal(t, http.StatusOK, getRes.StatusCode)
@@ -177,6 +183,7 @@ func (suite *AccountControllerTestSuite) TestGetAllById_NotFound() {
 	getURL := suite.basePath + "/non-existent-id"
 	getRes, err := http.Get(getURL)
 	require.NoError(t, err)
+
 	defer getRes.Body.Close()
 
 	assert.Equal(t, http.StatusNotFound, getRes.StatusCode)
@@ -209,6 +216,7 @@ func (suite *AccountControllerTestSuite) TestCredit_Success() {
 	creditURL := suite.basePath + "/" + createOut.AccountId + "/credit"
 	creditRes, err := http.Post(creditURL, "application/json", bytes.NewReader(creditBody))
 	require.NoError(t, err)
+
 	defer creditRes.Body.Close()
 
 	assert.Equal(t, http.StatusOK, creditRes.StatusCode)
@@ -241,6 +249,7 @@ func (suite *AccountControllerTestSuite) TestCredit_InvalidJSON() {
 	creditURL := suite.basePath + "/" + createOut.AccountId + "/credit"
 	creditRes, err := http.Post(creditURL, "application/json", bytes.NewBufferString("{invalid-json"))
 	require.NoError(t, err)
+
 	defer creditRes.Body.Close()
 
 	assert.Equal(t, http.StatusBadRequest, creditRes.StatusCode)
@@ -271,6 +280,7 @@ func (suite *AccountControllerTestSuite) TestCredit_InvalidAmount() {
 	creditURL := suite.basePath + "/" + createOut.AccountId + "/credit"
 	creditRes, err := http.Post(creditURL, "application/json", bytes.NewReader(creditBody))
 	require.NoError(t, err)
+
 	defer creditRes.Body.Close()
 
 	assert.Equal(t, http.StatusBadRequest, creditRes.StatusCode)
@@ -289,6 +299,7 @@ func (suite *AccountControllerTestSuite) TestCredit_AccountNotFound() {
 	creditURL := suite.basePath + "/non-existent-id/credit"
 	creditRes, err := http.Post(creditURL, "application/json", bytes.NewReader(creditBody))
 	require.NoError(t, err)
+
 	defer creditRes.Body.Close()
 
 	assert.Equal(t, http.StatusNotFound, creditRes.StatusCode)
