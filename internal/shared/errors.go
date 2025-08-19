@@ -6,4 +6,5 @@ var (
 	ErrNotFound      = errors.New("not found")
 	ErrInvalidParam  = errors.New("invalid parameter")
 	ErrAlreadyExists = errors.New("already exists")
+	ErrExternalApi   = errors.New("external API error")
 )
