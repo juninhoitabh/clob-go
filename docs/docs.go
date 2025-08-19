@@ -150,6 +150,46 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/orders": {
+            "post": {
+                "description": "Orders",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Orders",
+                "parameters": [
+                    {
+                        "description": "placeInputDto request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/order.placeInputDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/order.placeOutputDto"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/shared.Errors"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -247,6 +287,106 @@ const docTemplate = `{
                     "type": "object",
                     "additionalProperties": {
                         "$ref": "#/definitions/account.getAllByIdBalanceOutputDto"
+                    }
+                }
+            }
+        },
+        "order.placeInputDto": {
+            "type": "object",
+            "required": [
+                "account_id",
+                "instrument",
+                "price",
+                "qty",
+                "side"
+            ],
+            "properties": {
+                "account_id": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "instrument": {
+                    "type": "string",
+                    "example": "BTC-USD"
+                },
+                "price": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 50000
+                },
+                "qty": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 1
+                },
+                "side": {
+                    "type": "string",
+                    "enum": [
+                        "buy",
+                        "sell"
+                    ],
+                    "example": "buy"
+                }
+            }
+        },
+        "order.placeOutputDto": {
+            "type": "object",
+            "properties": {
+                "order": {
+                    "type": "object",
+                    "additionalProperties": {}
+                },
+                "report": {
+                    "$ref": "#/definitions/order.placeTradeReportOutputDto"
+                }
+            }
+        },
+        "order.placeTradeOutputDto": {
+            "type": "object",
+            "required": [
+                "buyer",
+                "maker_order_id",
+                "price",
+                "qty",
+                "seller",
+                "taker_order_id"
+            ],
+            "properties": {
+                "buyer": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "maker_order_id": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "price": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 50000
+                },
+                "qty": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 1
+                },
+                "seller": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "taker_order_id": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                }
+            }
+        },
+        "order.placeTradeReportOutputDto": {
+            "type": "object",
+            "properties": {
+                "trades": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/order.placeTradeOutputDto"
                     }
                 }
             }

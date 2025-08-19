@@ -66,6 +66,80 @@ definitions:
           $ref: '#/definitions/account.getAllByIdBalanceOutputDto'
         type: object
     type: object
+  order.placeInputDto:
+    properties:
+      account_id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      instrument:
+        example: BTC-USD
+        type: string
+      price:
+        example: 50000
+        minimum: 1
+        type: integer
+      qty:
+        example: 1
+        minimum: 1
+        type: integer
+      side:
+        enum:
+        - buy
+        - sell
+        example: buy
+        type: string
+    required:
+    - account_id
+    - instrument
+    - price
+    - qty
+    - side
+    type: object
+  order.placeOutputDto:
+    properties:
+      order:
+        additionalProperties: {}
+        type: object
+      report:
+        $ref: '#/definitions/order.placeTradeReportOutputDto'
+    type: object
+  order.placeTradeOutputDto:
+    properties:
+      buyer:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      maker_order_id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      price:
+        example: 50000
+        minimum: 1
+        type: integer
+      qty:
+        example: 1
+        minimum: 1
+        type: integer
+      seller:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      taker_order_id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+    required:
+    - buyer
+    - maker_order_id
+    - price
+    - qty
+    - seller
+    - taker_order_id
+    type: object
+  order.placeTradeReportOutputDto:
+    properties:
+      trades:
+        items:
+          $ref: '#/definitions/order.placeTradeOutputDto'
+        type: array
+    type: object
   shared.Errors:
     properties:
       details:
@@ -176,4 +250,30 @@ paths:
       summary: Credit
       tags:
       - Accounts
+  /orders:
+    post:
+      consumes:
+      - application/json
+      description: Orders
+      parameters:
+      - description: placeInputDto request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/order.placeInputDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/order.placeOutputDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/shared.Errors'
+      summary: Orders
+      tags:
+      - Orders
 swagger: "2.0"
