@@ -6,10 +6,9 @@ import (
 )
 
 type Config struct {
-	ApiHost         string
-	ApiPort         string
-	ApiPortTraining string
-	Environment     string
+	ApiHost     string
+	ApiPort     string
+	Environment string
 }
 
 func getEnv(key, defaultValue string) string {
@@ -23,10 +22,9 @@ func getEnv(key, defaultValue string) string {
 
 func LoadConfig() *Config {
 	return &Config{
-		ApiHost:         getEnv("API_HOST", "localhost"),
-		ApiPort:         getEnv("API_PORT", "3000"),
-		ApiPortTraining: getEnv("API_PORT_TRAINING", "3001"),
-		Environment:     getEnv("ENVIRONMENT", "development"),
+		ApiHost:     getEnv("API_HOST", "localhost"),
+		ApiPort:     getEnv("API_PORT", "3000"),
+		Environment: getEnv("ENVIRONMENT", "development"),
 	}
 }
 
