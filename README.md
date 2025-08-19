@@ -301,7 +301,8 @@ go tool cover -html=coverage.out
 ```
 
 Cobertura de Código
-<img alt="Coverage Badge" src="https://img.shields.io/badge/coverage-96.4%-brightgreen">
+<img alt="Coverage Badge" src="https://img.shields.io/badge/coverage-96.4%25-brightgreen">
+
 A cobertura de testes atual do projeto é de 96.4% do código total, com a maioria dos componentes críticos cobertos a 100%.
 
 <details> <summary>Ver relatório de cobertura detalhado</summary>
