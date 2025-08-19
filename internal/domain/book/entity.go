@@ -58,6 +58,7 @@ func (b *Book) AddOrder(o *order.Order) {
 			b.bidPrices = append(b.bidPrices, o.Price)
 			sort.Slice(b.bidPrices, func(i, j int) bool { return b.bidPrices[i] > b.bidPrices[j] })
 		}
+
 		pl.Orders = append(pl.Orders, o)
 	} else {
 		pl := b.asks[o.Price]
@@ -67,6 +68,7 @@ func (b *Book) AddOrder(o *order.Order) {
 			b.askPrices = append(b.askPrices, o.Price)
 			sort.Slice(b.askPrices, func(i, j int) bool { return b.askPrices[i] < b.askPrices[j] })
 		}
+
 		pl.Orders = append(pl.Orders, o)
 	}
 }

@@ -119,6 +119,7 @@ func (a *Account) ensureBalance(asset string) *Balance {
 		bal = &Balance{}
 		a.Balances[asset] = bal
 	}
+
 	return bal
 }
 

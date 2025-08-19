@@ -49,7 +49,8 @@ func (p *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, e
 		}
 	}
 
-	if err := p.AccountRepo.Save(acct); err != nil {
+	err = p.AccountRepo.Save(acct)
+	if err != nil {
 		return nil, err
 	}
 
