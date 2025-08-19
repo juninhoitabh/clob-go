@@ -5,6 +5,7 @@ linters:
   enable:
     - gosimple
     - govet
+    - usetesting
     - ineffassign
     - staticcheck
     - typecheck
@@ -29,7 +30,6 @@ linters:
     - nolintlint
     - prealloc
     - promlinter
-    - tenv
     - whitespace
     - wsl
 linters-settings:
