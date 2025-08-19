@@ -1,5 +1,3 @@
-version: "1"
-
 run:
   concurrency: 4
 linters:
