@@ -184,7 +184,7 @@ func (a *AccountController) Credit(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	shared.WriteJSON(w, http.StatusOK, updatedAccount)
+	shared.WriteJSON(w, http.StatusOK, creditOutputDtoResponse)
 }
 
 func NewAccountController(
