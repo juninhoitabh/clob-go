@@ -31,7 +31,6 @@ type (
 	placeTradeReportOutputDto struct {
 		Trades []placeTradeOutputDto `json:"trades"`
 	}
-
 	placeOutputDto struct {
 		Order  map[string]any            `json:"order"`
 		Report placeTradeReportOutputDto `json:"report"`
