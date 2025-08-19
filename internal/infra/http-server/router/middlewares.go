@@ -60,7 +60,9 @@ func withLogging(next http.Handler) http.Handler {
 		}
 
 		start := time.Now()
+
 		next.ServeHTTP(wrapped, r)
+
 		duration := time.Since(start)
 
 		log.Printf(
