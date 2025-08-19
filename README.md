@@ -300,6 +300,99 @@ go test -coverprofile=coverage.out ./...
 go tool cover -html=coverage.out
 ```
 
+Cobertura de Código
+<img alt="Coverage Badge" src="https://img.shields.io/badge/coverage-96.4%-brightgreen">
+A cobertura de testes atual do projeto é de 96.4% do código total, com a maioria dos componentes críticos cobertos a 100%.
+
+<details> <summary>Ver relatório de cobertura detalhado</summary>
+coverage: 88.0% of statements
+ok      github.com/juninhoitabh/clob-go/internal/domain/account/services        (cached)        coverage: 88.0% of statements
+github.com/juninhoitabh/clob-go/internal/application/account/usecases/create_account.go:14:     Execute                         100.0%
+github.com/juninhoitabh/clob-go/internal/application/account/usecases/create_account.go:33:     NewCreateAccountUseCase         100.0%
+github.com/juninhoitabh/clob-go/internal/application/account/usecases/credit_account.go:13:     Execute                         100.0%
+github.com/juninhoitabh/clob-go/internal/application/account/usecases/credit_account.go:31:     NewCreditAccountUseCase         100.0%
+github.com/juninhoitabh/clob-go/internal/application/book/usecases/snapshot_book.go:18:         Execute                         100.0%
+github.com/juninhoitabh/clob-go/internal/application/book/usecases/snapshot_book.go:55:         NewSnapshotBookUseCase          100.0%
+github.com/juninhoitabh/clob-go/internal/application/order/usecases/cancel_order.go:16:         Execute                         100.0%
+github.com/juninhoitabh/clob-go/internal/application/order/usecases/cancel_order.go:81:         NewCancelOrderUseCase           100.0%
+github.com/juninhoitabh/clob-go/internal/application/order/usecases/place_order.go:21:          Execute                         95.7%
+github.com/juninhoitabh/clob-go/internal/application/order/usecases/place_order.go:124:         NewPlaceOrderUseCase            100.0%
+github.com/juninhoitabh/clob-go/internal/domain/account/entity.go:33:                           Prepare                         100.0%
+github.com/juninhoitabh/clob-go/internal/domain/account/entity.go:48:                           Validate                        100.0%
+github.com/juninhoitabh/clob-go/internal/domain/account/entity.go:56:                           Credit                          100.0%
+github.com/juninhoitabh/clob-go/internal/domain/account/entity.go:67:                           Reserve                         100.0%
+github.com/juninhoitabh/clob-go/internal/domain/account/entity.go:83:                           UseReserved                     100.0%
+github.com/juninhoitabh/clob-go/internal/domain/account/entity.go:98:                           ReleaseReserved                 100.0%
+github.com/juninhoitabh/clob-go/internal/domain/account/entity.go:114:                          ensureBalance                   100.0%
+github.com/juninhoitabh/clob-go/internal/domain/account/entity.go:126:                          NewAccount                      100.0%
+github.com/juninhoitabh/clob-go/internal/domain/account/services/settle_trade.go:10:            SettleTrade                     90.0%
+github.com/juninhoitabh/clob-go/internal/domain/account/services/transfer.go:5:                 Transfer                        80.0%
+github.com/juninhoitabh/clob-go/internal/domain/book/entity.go:30:                              Prepare                         100.0%
+github.com/juninhoitabh/clob-go/internal/domain/book/entity.go:44:                              Validate                        100.0%
+github.com/juninhoitabh/clob-go/internal/domain/book/entity.go:52:                              AddOrder                        100.0%
+github.com/juninhoitabh/clob-go/internal/domain/book/entity.go:76:                              RemoveOrder                     94.4%
+github.com/juninhoitabh/clob-go/internal/domain/book/entity.go:111:                             BestBid                         100.0%
+github.com/juninhoitabh/clob-go/internal/domain/book/entity.go:119:                             BestAsk                         100.0%
+github.com/juninhoitabh/clob-go/internal/domain/book/entity.go:127:                             BidPrices                       100.0%
+github.com/juninhoitabh/clob-go/internal/domain/book/entity.go:131:                             AskPrices                       100.0%
+github.com/juninhoitabh/clob-go/internal/domain/book/entity.go:135:                             Bids                            100.0%
+github.com/juninhoitabh/clob-go/internal/domain/book/entity.go:139:                             Asks                            100.0%
+github.com/juninhoitabh/clob-go/internal/domain/book/entity.go:143:                             NewBook                         100.0%
+github.com/juninhoitabh/clob-go/internal/domain/book/price_level.entity.go:10:                  TotalQty                        100.0%
+github.com/juninhoitabh/clob-go/internal/domain/book/price_level.entity.go:20:                  NewPriceLevel                   100.0%
+github.com/juninhoitabh/clob-go/internal/domain/book/services/match_order.go:21:                MatchOrder                      100.0%
+github.com/juninhoitabh/clob-go/internal/domain/book/services/match_order.go:99:                min                             100.0%
+github.com/juninhoitabh/clob-go/internal/domain/book/utils.go:8:                                SplitInstrument                 100.0%
+github.com/juninhoitabh/clob-go/internal/domain/order/entity.go:43:                             Prepare                         100.0%
+github.com/juninhoitabh/clob-go/internal/domain/order/entity.go:56:                             Validate                        100.0%
+github.com/juninhoitabh/clob-go/internal/domain/order/entity.go:72:                             Public                          75.0%
+github.com/juninhoitabh/clob-go/internal/domain/order/entity.go:90:                             NewOrder                        100.0%
+github.com/juninhoitabh/clob-go/internal/domain/order/utils.go:10:                              ParseSide                       100.0%
+github.com/juninhoitabh/clob-go/internal/infra/config/config.go:14:                             getEnv                          100.0%
+github.com/juninhoitabh/clob-go/internal/infra/config/config.go:23:                             LoadConfig                      100.0%
+github.com/juninhoitabh/clob-go/internal/infra/config/config.go:33:                             Init                            100.0%
+github.com/juninhoitabh/clob-go/internal/infra/controllers/account/controller.go:60:            Create                          87.5%
+github.com/juninhoitabh/clob-go/internal/infra/controllers/account/controller.go:106:           GetAllById                      100.0%
+github.com/juninhoitabh/clob-go/internal/infra/controllers/account/controller.go:144:           Credit                          90.5%
+github.com/juninhoitabh/clob-go/internal/infra/controllers/account/controller.go:196:           NewAccountController            100.0%
+github.com/juninhoitabh/clob-go/internal/infra/controllers/book/controller.go:39:               Get                             89.5%
+github.com/juninhoitabh/clob-go/internal/infra/controllers/book/controller.go:89:               NewBookController               100.0%
+github.com/juninhoitabh/clob-go/internal/infra/controllers/order/controller.go:61:              Place                           94.1%
+github.com/juninhoitabh/clob-go/internal/infra/controllers/order/controller.go:123:             Cancel                          83.3%
+github.com/juninhoitabh/clob-go/internal/infra/controllers/order/controller.go:152:             NewOrderController              100.0%
+github.com/juninhoitabh/clob-go/internal/infra/daos/account/in_memory.go:15:                    Snapshot                        100.0%
+github.com/juninhoitabh/clob-go/internal/infra/daos/account/in_memory.go:39:                    NewInMemoryAccountDAO           100.0%
+github.com/juninhoitabh/clob-go/internal/infra/http-client/http-client-go.adapter.go:17:        NewDefaultHttpClient            100.0%
+github.com/juninhoitabh/clob-go/internal/infra/http-client/http-client-go.adapter.go:24:        Get                             100.0%
+github.com/juninhoitabh/clob-go/internal/infra/http-client/http-client-go.adapter.go:28:        Post                            100.0%
+github.com/juninhoitabh/clob-go/internal/infra/http-client/http-client-go.adapter.go:32:        Put                             100.0%
+github.com/juninhoitabh/clob-go/internal/infra/http-client/http-client-go.adapter.go:36:        Delete                          100.0%
+github.com/juninhoitabh/clob-go/internal/infra/http-client/http-client-go.adapter.go:40:        do                              82.6%
+github.com/juninhoitabh/clob-go/internal/infra/repositories/account/in_memory.go:20:            NewInMemoryAccountRepository    100.0%
+github.com/juninhoitabh/clob-go/internal/infra/repositories/account/in_memory.go:30:            Create                          100.0%
+github.com/juninhoitabh/clob-go/internal/infra/repositories/account/in_memory.go:51:            Get                             100.0%
+github.com/juninhoitabh/clob-go/internal/infra/repositories/account/in_memory.go:63:            Save                            100.0%
+github.com/juninhoitabh/clob-go/internal/infra/repositories/account/in_memory.go:73:            AccountsMap                     100.0%
+github.com/juninhoitabh/clob-go/internal/infra/repositories/account/in_memory.go:77:            Mutex                           100.0%
+github.com/juninhoitabh/clob-go/internal/infra/repositories/account/in_memory.go:81:            ResetInMemoryAccountRepository  100.0%
+github.com/juninhoitabh/clob-go/internal/infra/repositories/book/in_memory.go:19:               NewInMemoryBookRepository       100.0%
+github.com/juninhoitabh/clob-go/internal/infra/repositories/book/in_memory.go:29:               GetBook                         100.0%
+github.com/juninhoitabh/clob-go/internal/infra/repositories/book/in_memory.go:36:               SaveBook                        100.0%
+github.com/juninhoitabh/clob-go/internal/infra/repositories/order/in_memory.go:19:              NewInMemoryOrderRepository      100.0%
+github.com/juninhoitabh/clob-go/internal/infra/repositories/order/in_memory.go:29:              GetOrder                        100.0%
+github.com/juninhoitabh/clob-go/internal/infra/repositories/order/in_memory.go:36:              SaveOrder                       100.0%
+github.com/juninhoitabh/clob-go/internal/infra/repositories/order/in_memory.go:45:              RemoveOrder                     100.0%
+github.com/juninhoitabh/clob-go/internal/shared/domain/entities/base.entity.go:11:              NewBaseEntity                   100.0%
+github.com/juninhoitabh/clob-go/internal/shared/domain/entities/base.entity.go:19:              GetID                           100.0%
+github.com/juninhoitabh/clob-go/internal/shared/domain/value-objects/id/id.value-object.go:20:  NewID                           100.0%
+github.com/juninhoitabh/clob-go/internal/shared/responses.go:21:                                Mul                             100.0%
+github.com/juninhoitabh/clob-go/internal/shared/responses.go:23:                                WriteJSON                       100.0%
+github.com/juninhoitabh/clob-go/internal/shared/responses.go:29:                                WriteError                      100.0%
+github.com/juninhoitabh/clob-go/internal/shared/responses.go:38:                                HandleError                     100.0%
+github.com/juninhoitabh/clob-go/internal/shared/responses.go:51:                                BadRequestError                 100.0%
+total:                                                                                          (statements)                    96.4%
+</details>
+
 ## Considerações e Limitações
 
 1. **Implementação em Memória**: Esta implementação mantém todos os dados em memória, sem persistência.
