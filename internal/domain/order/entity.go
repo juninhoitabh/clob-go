@@ -76,7 +76,7 @@ func (o *Order) Public() map[string]any {
 	}
 
 	return map[string]any{
-		"id":         o.ID,
+		"id":         o.ID.ID,
 		"account_id": o.AccountID,
 		"instrument": o.Instrument,
 		"side":       side,
