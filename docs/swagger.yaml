@@ -1,0 +1,8 @@
+info:
+  contact:
+    name: Junior Paz
+  description: Clob API without Authentication
+  termsOfService: http://swagger.io/terms/
+  title: Clob API
+paths: {}
+swagger: "2.0"

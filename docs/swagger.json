@@ -1,0 +1,12 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Clob API without Authentication",
+        "title": "Clob API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Junior Paz"
+        }
+    },
+    "paths": {}
+}
