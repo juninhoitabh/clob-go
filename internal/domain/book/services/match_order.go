@@ -8,10 +8,10 @@ import (
 type Trade struct {
 	TakerOrderID string
 	MakerOrderID string
-	Price        int64
-	Qty          int64
 	BuyerID      string
 	SellerID     string
+	Price        int64
+	Qty          int64
 }
 
 type TradeReport struct {
@@ -100,5 +100,6 @@ func min(a, b int64) int64 {
 	if a < b {
 		return a
 	}
+
 	return b
 }

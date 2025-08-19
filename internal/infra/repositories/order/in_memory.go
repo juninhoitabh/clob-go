@@ -12,8 +12,8 @@ var (
 )
 
 type InMemoryOrderRepository struct {
-	mu     sync.Mutex
 	orders map[string]*order.Order
+	mu     sync.Mutex
 }
 
 func NewInMemoryOrderRepository() *InMemoryOrderRepository {

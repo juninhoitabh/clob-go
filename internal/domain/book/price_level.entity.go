@@ -3,8 +3,8 @@ package book
 import "github.com/juninhoitabh/clob-go/internal/domain/order"
 
 type PriceLevel struct {
+	Orders []*order.Order
 	Price  int64
-	Orders []*order.Order // FIFO
 }
 
 func (pl *PriceLevel) TotalQty() int64 {

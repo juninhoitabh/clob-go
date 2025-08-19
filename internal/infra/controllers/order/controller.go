@@ -23,10 +23,10 @@ type (
 	placeTradeOutputDto struct {
 		TakerOrderID string `json:"taker_order_id" example:"123e4567-e89b-12d3-a456-426614174000"`
 		MakerOrderID string `json:"maker_order_id" example:"123e4567-e89b-12d3-a456-426614174000"`
-		Price        int64  `json:"price" example:"50000" validate:"required,gte=1"`
-		Qty          int64  `json:"qty" example:"1" validate:"required,gte=1"`
 		BuyerID      string `json:"buyer_id" example:"123e4567-e89b-12d3-a456-426614174000"`
 		SellerID     string `json:"seller_id" example:"123e4567-e89b-12d3-a456-426614174000"`
+		Price        int64  `json:"price" example:"50000" validate:"required,gte=1"`
+		Qty          int64  `json:"qty" example:"1" validate:"required,gte=1"`
 	}
 	placeTradeReportOutputDto struct {
 		Trades []placeTradeOutputDto `json:"trades"`
@@ -121,6 +121,7 @@ func (o *OrderController) Cancel(w http.ResponseWriter, req *http.Request) {
 	oid := req.PathValue("id")
 	if oid == "" {
 		http.Error(w, "order id required", http.StatusBadRequest)
+
 		return
 	}
 

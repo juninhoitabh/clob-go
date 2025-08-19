@@ -15,6 +15,7 @@ type SettleTradeParams struct {
 
 func SettleTradeParamsFaker() SettleTradeParams {
 	f := faker.New(0)
+
 	return SettleTradeParams{
 		BuyerID:  f.UUID(),
 		SellerID: f.UUID(),

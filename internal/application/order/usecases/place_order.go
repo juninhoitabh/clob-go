@@ -40,11 +40,14 @@ func (p *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, e
 
 	if side == domainOrder.Buy {
 		cost := shared.Mul(input.Price, input.Qty)
-		if err := acct.Reserve(quote, cost); err != nil {
+
+		err = acct.Reserve(quote, cost)
+		if err != nil {
 			return nil, err
 		}
 	} else {
-		if err := acct.Reserve(base, input.Qty); err != nil {
+		err = acct.Reserve(base, input.Qty)
+		if err != nil {
 			return nil, err
 		}
 	}
@@ -91,6 +94,7 @@ func (p *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, e
 	}
 
 	report := services.MatchOrder(b, order)
+
 	err = p.BookRepo.SaveBook(b)
 	if err != nil {
 		return nil, err

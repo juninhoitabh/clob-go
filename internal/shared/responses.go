@@ -7,15 +7,15 @@ import (
 )
 
 type Errors struct {
-	Status  int      `json:"status" example:"400"`
 	Message string   `json:"message" example:"Invalid parameter"`
 	Details []string `json:"details,omitempty" example:"The 'name' field is required"`
+	Status  int      `json:"status" example:"400"`
 }
 
 type ErrorResponse struct {
-	Status  int      `json:"status"`
 	Message string   `json:"message"`
 	Details []string `json:"details,omitempty"`
+	Status  int      `json:"status"`
 }
 
 func Mul(a, b int64) int64 { return a * b }

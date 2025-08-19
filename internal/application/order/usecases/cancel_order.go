@@ -52,20 +52,24 @@ func (c *CancelOrderUseCase) Execute(input CancelOrderInput) (*CancelOrderOutput
 	if order.Side == domainOrder.Buy {
 		amount := shared.Mul(order.Price, order.Remaining)
 
-		if err := acct.ReleaseReserved(quote, amount); err != nil {
+		err = acct.ReleaseReserved(quote, amount)
+		if err != nil {
 			return nil, err
 		}
 	} else {
-		if err := acct.ReleaseReserved(base, order.Remaining); err != nil {
+		err = acct.ReleaseReserved(base, order.Remaining)
+		if err != nil {
 			return nil, err
 		}
 	}
 
-	if err := c.AccountRepo.Save(acct); err != nil {
+	err = c.AccountRepo.Save(acct)
+	if err != nil {
 		return nil, err
 	}
 
 	order.Remaining = 0
+
 	err = c.OrderRepo.SaveOrder(order)
 	if err != nil {
 		return nil, err

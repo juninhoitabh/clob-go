@@ -23,8 +23,8 @@ type (
 		Reserved  int64 `json:"reserved" example:"0"`
 	}
 	getAllByIdOutputDto struct {
-		AccountID string                                `json:"account_id" example:"123e4567-e89b-12d3-a456-426614174000"`
 		Balances  map[string]getAllByIdBalanceOutputDto `json:"balances"`
+		AccountID string                                `json:"account_id" example:"123e4567-e89b-12d3-a456-426614174000"`
 	}
 	creditInputDto struct {
 		Asset  string `json:"asset" example:"USD" validate:"required"`
@@ -35,8 +35,8 @@ type (
 		Reserved  int64 `json:"reserved" example:"0"`
 	}
 	creditOutputDto struct {
-		AccountID string                            `json:"account_id" example:"123e4567-e89b-12d3-a456-426614174000"`
 		Balances  map[string]creditBalanceOutputDto `json:"balances"`
+		AccountID string                            `json:"account_id" example:"123e4567-e89b-12d3-a456-426614174000"`
 	}
 	AccountController struct {
 		accountDAO  domainAccount.IAccountDAO

@@ -30,6 +30,7 @@ type OrderProps struct {
 }
 
 type Order struct {
+	CreatedAt time.Time
 	baseEntity.BaseEntity
 	AccountID  string
 	Instrument string
@@ -37,7 +38,6 @@ type Order struct {
 	Price      int64
 	Qty        int64
 	Remaining  int64
-	CreatedAt  time.Time
 }
 
 func (o *Order) Prepare(typeId idObjValue.TypeIdEnum) error {

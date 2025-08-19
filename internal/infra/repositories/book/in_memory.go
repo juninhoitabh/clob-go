@@ -12,8 +12,8 @@ var (
 )
 
 type InMemoryBookRepository struct {
-	mu    sync.Mutex
 	books map[string]*book.Book
+	mu    sync.Mutex
 }
 
 func NewInMemoryBookRepository() *InMemoryBookRepository {

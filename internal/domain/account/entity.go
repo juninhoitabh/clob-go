@@ -23,10 +23,10 @@ type (
 		Reserved  int64
 	}
 	Account struct {
-		baseEntity.BaseEntity
-		Name      string
-		Balances  map[string]*Balance
 		CreatedAt time.Time
+		Balances  map[string]*Balance
+		baseEntity.BaseEntity
+		Name string
 	}
 )
 

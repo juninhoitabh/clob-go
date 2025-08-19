@@ -13,8 +13,8 @@ var (
 )
 
 type InMemoryAccountRepository struct {
-	mu       sync.Mutex
 	accounts map[string]*domainAccount.Account
+	mu       sync.Mutex
 }
 
 func NewInMemoryAccountRepository() *InMemoryAccountRepository {
