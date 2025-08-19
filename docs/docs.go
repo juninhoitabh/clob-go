@@ -151,6 +151,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/books/{instrument}": {
+            "get": {
+                "description": "Get by Instrument",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Get by Instrument",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "instrument",
+                        "name": "instrument",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/book.getByInstrumentOutputDto"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/shared.Errors"
+                        }
+                    }
+                }
+            }
+        },
         "/orders": {
             "post": {
                 "description": "Orders",
@@ -180,6 +218,45 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/order.placeOutputDto"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/shared.Errors"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/{id}/cancel": {
+            "post": {
+                "description": "Orders Cancel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Orders Cancel",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "order_id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/order.cancelOutputDto"
                         }
                     },
                     "500": {
@@ -291,6 +368,53 @@ const docTemplate = `{
                 }
             }
         },
+        "book.getByInstrumentLevelOutputDto": {
+            "type": "object",
+            "properties": {
+                "price": {
+                    "type": "integer",
+                    "example": 50000
+                },
+                "qty": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "book.getByInstrumentOutputDto": {
+            "type": "object",
+            "properties": {
+                "asks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/book.getByInstrumentLevelOutputDto"
+                    }
+                },
+                "bids": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/book.getByInstrumentLevelOutputDto"
+                    }
+                },
+                "instrument": {
+                    "type": "string",
+                    "example": "BTC/USDT"
+                }
+            }
+        },
+        "order.cancelOutputDto": {
+            "type": "object",
+            "properties": {
+                "order": {
+                    "type": "object",
+                    "additionalProperties": {}
+                },
+                "status": {
+                    "type": "string",
+                    "example": "canceled"
+                }
+            }
+        },
         "order.placeInputDto": {
             "type": "object",
             "required": [
@@ -344,15 +468,11 @@ const docTemplate = `{
         "order.placeTradeOutputDto": {
             "type": "object",
             "required": [
-                "buyer",
-                "maker_order_id",
                 "price",
-                "qty",
-                "seller",
-                "taker_order_id"
+                "qty"
             ],
             "properties": {
-                "buyer": {
+                "buyer_id": {
                     "type": "string",
                     "example": "123e4567-e89b-12d3-a456-426614174000"
                 },
@@ -370,7 +490,7 @@ const docTemplate = `{
                     "minimum": 1,
                     "example": 1
                 },
-                "seller": {
+                "seller_id": {
                     "type": "string",
                     "example": "123e4567-e89b-12d3-a456-426614174000"
                 },

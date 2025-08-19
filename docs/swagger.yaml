@@ -66,6 +66,38 @@ definitions:
           $ref: '#/definitions/account.getAllByIdBalanceOutputDto'
         type: object
     type: object
+  book.getByInstrumentLevelOutputDto:
+    properties:
+      price:
+        example: 50000
+        type: integer
+      qty:
+        example: 1
+        type: integer
+    type: object
+  book.getByInstrumentOutputDto:
+    properties:
+      asks:
+        items:
+          $ref: '#/definitions/book.getByInstrumentLevelOutputDto'
+        type: array
+      bids:
+        items:
+          $ref: '#/definitions/book.getByInstrumentLevelOutputDto'
+        type: array
+      instrument:
+        example: BTC/USDT
+        type: string
+    type: object
+  order.cancelOutputDto:
+    properties:
+      order:
+        additionalProperties: {}
+        type: object
+      status:
+        example: canceled
+        type: string
+    type: object
   order.placeInputDto:
     properties:
       account_id:
@@ -105,7 +137,7 @@ definitions:
     type: object
   order.placeTradeOutputDto:
     properties:
-      buyer:
+      buyer_id:
         example: 123e4567-e89b-12d3-a456-426614174000
         type: string
       maker_order_id:
@@ -119,19 +151,15 @@ definitions:
         example: 1
         minimum: 1
         type: integer
-      seller:
+      seller_id:
         example: 123e4567-e89b-12d3-a456-426614174000
         type: string
       taker_order_id:
         example: 123e4567-e89b-12d3-a456-426614174000
         type: string
     required:
-    - buyer
-    - maker_order_id
     - price
     - qty
-    - seller
-    - taker_order_id
     type: object
   order.placeTradeReportOutputDto:
     properties:
@@ -250,6 +278,31 @@ paths:
       summary: Credit
       tags:
       - Accounts
+  /books/{instrument}:
+    get:
+      consumes:
+      - application/json
+      description: Get by Instrument
+      parameters:
+      - description: instrument
+        in: path
+        name: instrument
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/book.getByInstrumentOutputDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/shared.Errors'
+      summary: Get by Instrument
+      tags:
+      - Books
   /orders:
     post:
       consumes:
@@ -274,6 +327,32 @@ paths:
           schema:
             $ref: '#/definitions/shared.Errors'
       summary: Orders
+      tags:
+      - Orders
+  /orders/{id}/cancel:
+    post:
+      consumes:
+      - application/json
+      description: Orders Cancel
+      parameters:
+      - description: order_id
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/order.cancelOutputDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/shared.Errors'
+      summary: Orders Cancel
       tags:
       - Orders
 swagger: "2.0"
