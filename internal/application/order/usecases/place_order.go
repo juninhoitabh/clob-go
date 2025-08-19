@@ -98,8 +98,8 @@ func (p *PlaceOrderUseCase) Execute(input PlaceOrderInput) (*PlaceOrderOutput, e
 	for _, trade := range report.Trades {
 		err := accountServices.SettleTrade(
 			p.AccountRepo,
-			trade.Buyer,
-			trade.Seller,
+			trade.BuyerID,
+			trade.SellerID,
 			base,
 			quote,
 			trade.Price,

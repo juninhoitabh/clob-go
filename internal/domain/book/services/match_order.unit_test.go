@@ -48,8 +48,8 @@ func (suite *MatchOrderUnitTestSuite) TestMatchOrder_FullMatchBuy() {
 	trade := report.Trades[0]
 	assert.Equal(suite.T(), int64(10), trade.Qty)
 	assert.Equal(suite.T(), int64(100), trade.Price)
-	assert.Equal(suite.T(), "buyer1", trade.Buyer)
-	assert.Equal(suite.T(), "seller1", trade.Seller)
+	assert.Equal(suite.T(), "buyer1", trade.BuyerID)
+	assert.Equal(suite.T(), "seller1", trade.SellerID)
 	assert.Equal(suite.T(), int64(0), buy.Remaining)
 	assert.Equal(suite.T(), int64(0), ask.Remaining)
 }
@@ -120,8 +120,8 @@ func (suite *MatchOrderUnitTestSuite) TestMatchOrder_FullMatchSell() {
 	trade := report.Trades[0]
 	assert.Equal(suite.T(), int64(8), trade.Qty)
 	assert.Equal(suite.T(), int64(101), trade.Price)
-	assert.Equal(suite.T(), "buyer4", trade.Buyer)
-	assert.Equal(suite.T(), "seller4", trade.Seller)
+	assert.Equal(suite.T(), "buyer4", trade.BuyerID)
+	assert.Equal(suite.T(), "seller4", trade.SellerID)
 	assert.Equal(suite.T(), int64(0), sell.Remaining)
 	assert.Equal(suite.T(), int64(0), bid.Remaining)
 }

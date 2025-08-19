@@ -10,8 +10,8 @@ type Trade struct {
 	MakerOrderID string
 	Price        int64
 	Qty          int64
-	Buyer        string
-	Seller       string
+	BuyerID      string
+	SellerID     string
 }
 
 type TradeReport struct {
@@ -38,8 +38,8 @@ func MatchOrder(b *book.Book, o *order.Order) *TradeReport {
 					MakerOrderID: maker.GetID(),
 					Price:        execPrice,
 					Qty:          tradeQty,
-					Buyer:        o.AccountID,
-					Seller:       maker.AccountID,
+					BuyerID:      o.AccountID,
+					SellerID:     maker.AccountID,
 				})
 
 				o.Remaining -= tradeQty
@@ -73,8 +73,8 @@ func MatchOrder(b *book.Book, o *order.Order) *TradeReport {
 					MakerOrderID: maker.GetID(),
 					Price:        execPrice,
 					Qty:          tradeQty,
-					Buyer:        maker.AccountID,
-					Seller:       o.AccountID,
+					BuyerID:      maker.AccountID,
+					SellerID:     o.AccountID,
 				})
 
 				o.Remaining -= tradeQty
