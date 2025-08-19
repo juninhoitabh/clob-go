@@ -11,20 +11,24 @@ import (
 
 func TestGetEnv(t *testing.T) {
 	os.Unsetenv("API_HOST")
+
 	cfg := config.LoadConfig()
+
 	assert.Equal(t, "localhost", cfg.ApiHost, "Deve usar o valor padrão quando a variável de ambiente não está definida")
 
-	os.Setenv("API_HOST", "custom-host")
+	t.Setenv("API_HOST", "custom-host")
+
 	cfg = config.LoadConfig()
+
 	assert.Equal(t, "custom-host", cfg.ApiHost, "Deve usar o valor da variável de ambiente quando definida")
 
 	os.Unsetenv("API_HOST")
 }
 
 func TestLoadConfig(t *testing.T) {
-	os.Setenv("API_HOST", "test-host")
-	os.Setenv("API_PORT", "8080")
-	os.Setenv("ENVIRONMENT", "staging")
+	t.Setenv("API_HOST", "test-host")
+	t.Setenv("API_PORT", "8080")
+	t.Setenv("ENVIRONMENT", "staging")
 
 	cfg := config.LoadConfig()
 
@@ -38,9 +42,9 @@ func TestLoadConfig(t *testing.T) {
 }
 
 func TestInit(t *testing.T) {
-	os.Setenv("API_HOST", "init-test-host")
-	os.Setenv("API_PORT", "9090")
-	os.Setenv("ENVIRONMENT", "production")
+	t.Setenv("API_HOST", "init-test-host")
+	t.Setenv("API_PORT", "9090")
+	t.Setenv("ENVIRONMENT", "production")
 
 	config.Init()
 
@@ -55,7 +59,7 @@ func TestInit(t *testing.T) {
 }
 
 func TestInit_UnknownEnvironment(t *testing.T) {
-	os.Setenv("ENVIRONMENT", "unknown")
+	t.Setenv("ENVIRONMENT", "unknown")
 
 	config.Init()
 
