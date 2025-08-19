@@ -3,7 +3,6 @@ package config
 import (
 	"fmt"
 	"os"
-	"strconv"
 )
 
 type Config struct {
@@ -20,34 +19,6 @@ func getEnv(key, defaultValue string) string {
 	}
 
 	return value
-}
-
-func getEnvAsBool(key string, defaultValue bool) bool {
-	value, exists := os.LookupEnv(key)
-	if !exists {
-		return defaultValue
-	}
-
-	val, err := strconv.ParseBool(value)
-	if err != nil {
-		return defaultValue
-	}
-
-	return val
-}
-
-func getEnvAsInt(key string, defaultValue int) int {
-	value, exists := os.LookupEnv(key)
-	if !exists {
-		return defaultValue
-	}
-
-	val, err := strconv.Atoi(value)
-	if err != nil {
-		return defaultValue
-	}
-
-	return val
 }
 
 func LoadConfig() *Config {
