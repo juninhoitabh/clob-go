@@ -11,12 +11,32 @@ import (
 )
 
 type (
-	createReq struct {
-		AccountName string `json:"account_name"`
+	createInputDto struct {
+		AccountName string `json:"account_name" example:"test" validate:"required"`
 	}
-	creditReq struct {
-		Asset  string `json:"asset"`
-		Amount int64  `json:"amount"`
+	createOutputDto struct {
+		AccountId string `json:"account_id" example:"123e4567-e89b-12d3-a456-426614174000"`
+		Status    string `json:"status" example:"created"`
+	}
+	getAllByIdBalanceOutputDto struct {
+		Available int64 `json:"available" example:"1000"`
+		Reserved  int64 `json:"reserved" example:"0"`
+	}
+	getAllByIdOutputDto struct {
+		AccountID string                                `json:"account_id" example:"123e4567-e89b-12d3-a456-426614174000"`
+		Balances  map[string]getAllByIdBalanceOutputDto `json:"balances"`
+	}
+	creditInputDto struct {
+		Asset  string `json:"asset" example:"USD" validate:"required"`
+		Amount int64  `json:"amount" example:"1000" validate:"required,gt=0"`
+	}
+	creditBalanceOutputDto struct {
+		Available int64 `json:"available" example:"1000"`
+		Reserved  int64 `json:"reserved" example:"0"`
+	}
+	creditOutputDto struct {
+		AccountID string                                `json:"account_id" example:"123e4567-e89b-12d3-a456-426614174000"`
+		Balances  map[string]getAllByIdBalanceOutputDto `json:"balances"`
 	}
 	AccountController struct {
 		accountDAO  domainAccount.IAccountDAO
@@ -24,16 +44,27 @@ type (
 	}
 )
 
+// Accounts godoc
+// @Summary      Accounts
+// @Description  Accounts
+// @Tags         Accounts
+// @Accept       json
+// @Produce      json
+// @Param        request   body      createInputDto  true  "createInputDto request"
+// @Success      200       {object}  createOutputDto
+// @Success      201       {object}  createOutputDto
+// @Failure      500       {object}  shared.Errors
+// @Router       /accounts [post]
 func (a *AccountController) Create(w http.ResponseWriter, req *http.Request) {
-	var body createReq
+	var body createInputDto
 	if err := json.NewDecoder(req.Body).Decode(&body); err != nil {
-		http.Error(w, "invalid json", http.StatusBadRequest)
+		shared.BadRequestError(w, "Invalid JSON", err.Error())
 
 		return
 	}
 
 	if body.AccountName == "" {
-		http.Error(w, "account_name required", http.StatusBadRequest)
+		shared.BadRequestError(w, "account_name is required")
 
 		return
 	}
@@ -45,7 +76,7 @@ func (a *AccountController) Create(w http.ResponseWriter, req *http.Request) {
 	})
 	if err != nil {
 		if errors.Is(err, shared.ErrAlreadyExists) {
-			shared.WriteJSON(w, http.StatusOK, map[string]any{"status": "exists"})
+			shared.WriteJSON(w, http.StatusOK, createOutputDto{Status: "exists"})
 
 			return
 		}
@@ -55,45 +86,73 @@ func (a *AccountController) Create(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	shared.WriteJSON(w, http.StatusCreated, map[string]any{"account_id": createAccountOutput.ID})
+	shared.WriteJSON(w, http.StatusCreated, createOutputDto{AccountId: createAccountOutput.ID, Status: "created"})
 }
 
-func (a *AccountController) Get(w http.ResponseWriter, req *http.Request) {
+// GetAllById godoc
+// @Summary      Get All By Id
+// @Description  Get All By Id
+// @Tags         Accounts
+// @Accept       json
+// @Produce      json
+// @Param        id        path      string               true  "account_id" Format(uuid)
+// @Success      200       {object}  getAllByIdOutputDto
+// @Failure      500       {object}  shared.Errors
+// @Router       /accounts/{id} [get]
+func (a *AccountController) GetAllById(w http.ResponseWriter, req *http.Request) {
 	id := req.PathValue("id")
 
 	acct, err := a.accountDAO.Snapshot(id)
 	if err != nil {
-		status := http.StatusBadRequest
-
-		if errors.Is(err, shared.ErrNotFound) {
-			status = http.StatusNotFound
-		}
-
-		http.Error(w, err.Error(), status)
+		shared.HandleError(w, err)
 
 		return
 	}
 
-	shared.WriteJSON(w, http.StatusOK, acct)
+	getAllByIdOutputDtoResponse := getAllByIdOutputDto{
+		AccountID: acct.AccountID,
+		Balances:  make(map[string]getAllByIdBalanceOutputDto),
+	}
+
+	for asset, balance := range acct.Balances {
+		getAllByIdOutputDtoResponse.Balances[asset] = getAllByIdBalanceOutputDto{
+			Available: balance.Available,
+			Reserved:  balance.Reserved,
+		}
+	}
+
+	shared.WriteJSON(w, http.StatusOK, getAllByIdOutputDtoResponse)
 }
 
+// Credit godoc
+// @Summary      Credit
+// @Description  Credit
+// @Tags         Accounts
+// @Accept       json
+// @Produce      json
+// @Param        id        path      string          true  "account_id" Format(uuid)
+// @Param        request   body      creditInputDto  true  "creditInputDto request"
+// @Success      200       {object}  creditOutputDto
+// @Failure      500       {object}  shared.Errors
+// @Router       /accounts/{id}/credit [post]
 func (a *AccountController) Credit(w http.ResponseWriter, req *http.Request) {
 	id := req.PathValue("id")
 	if id == "" {
-		http.Error(w, "missing account id", http.StatusBadRequest)
+		shared.BadRequestError(w, "missing account_id")
 
 		return
 	}
 
-	var body creditReq
+	var body creditInputDto
 
 	if err := json.NewDecoder(req.Body).Decode(&body); err != nil {
-		http.Error(w, "invalid json", http.StatusBadRequest)
+		shared.BadRequestError(w, "Invalid JSON", err.Error())
+
 		return
 	}
 
 	if body.Asset == "" || body.Amount <= 0 {
-		http.Error(w, "asset and positive amount required", http.StatusBadRequest)
+		shared.BadRequestError(w, "asset and positive amount required")
 
 		return
 	}
@@ -106,18 +165,14 @@ func (a *AccountController) Credit(w http.ResponseWriter, req *http.Request) {
 		Amount:    body.Amount,
 	})
 	if err != nil {
-		status := http.StatusBadRequest
-
-		if errors.Is(err, shared.ErrNotFound) {
-			status = http.StatusNotFound
-		}
-
-		http.Error(w, err.Error(), status)
+		shared.HandleError(w, err)
 
 		return
 	}
 
-	shared.WriteJSON(w, http.StatusOK, map[string]any{"status": "ok"})
+	updatedAccount, _ := a.accountDAO.Snapshot(id)
+
+	shared.WriteJSON(w, http.StatusOK, updatedAccount)
 }
 
 func NewAccountController(

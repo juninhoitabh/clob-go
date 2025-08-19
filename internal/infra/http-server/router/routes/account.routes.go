@@ -19,5 +19,5 @@ func AccountGenerate(router *http.ServeMux, apiV1Prefix string) {
 
 	router.HandleFunc("POST "+apiV1Prefix+"/accounts", controller.Create)
 	router.HandleFunc("POST "+apiV1Prefix+"/accounts/{id}/credit", controller.Credit)
-	router.HandleFunc("GET "+apiV1Prefix+"/accounts/{id}", controller.Get)
+	router.HandleFunc("GET "+apiV1Prefix+"/accounts/{id}", controller.GetAllById)
 }
