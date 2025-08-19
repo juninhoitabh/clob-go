@@ -6,3 +6,7 @@ mock:
 # SWAGGER
 swagGenerate: 
 	swag init -g internal/infra/http-server/router/router.go
+
+# RUN Tests and Lint
+test-lint:
+	./gosweep.sh
