@@ -46,9 +46,9 @@ type (
 	}
 	AccountControllerTestSuite struct {
 		suite.Suite
+		httpClient    httpAdapter.HttpClient
 		e2eTestHandle *httpServer.E2eTestHandle
 		basePath      string
-		httpClient    httpAdapter.HttpClient
 	}
 )
 
