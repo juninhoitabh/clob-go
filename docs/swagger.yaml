@@ -1,8 +1,170 @@
+definitions:
+  account.createInputDto:
+    properties:
+      account_name:
+        example: test
+        type: string
+    required:
+    - account_name
+    type: object
+  account.createOutputDto:
+    properties:
+      account_id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      status:
+        example: created
+        type: string
+    type: object
+  account.creditInputDto:
+    properties:
+      amount:
+        example: 1000
+        type: integer
+      asset:
+        example: USD
+        type: string
+    required:
+    - amount
+    - asset
+    type: object
+  account.creditOutputDto:
+    properties:
+      account_id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      balances:
+        additionalProperties:
+          $ref: '#/definitions/account.getAllByIdBalanceOutputDto'
+        type: object
+    type: object
+  account.getAllByIdBalanceOutputDto:
+    properties:
+      available:
+        example: 1000
+        type: integer
+      reserved:
+        example: 0
+        type: integer
+    type: object
+  account.getAllByIdOutputDto:
+    properties:
+      account_id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      balances:
+        additionalProperties:
+          $ref: '#/definitions/account.getAllByIdBalanceOutputDto'
+        type: object
+    type: object
+  shared.Errors:
+    properties:
+      details:
+        example:
+        - The 'name' field is required
+        items:
+          type: string
+        type: array
+      message:
+        example: Invalid parameter
+        type: string
+      status:
+        example: 400
+        type: integer
+    type: object
 info:
   contact:
     name: Junior Paz
   description: Clob API without Authentication
   termsOfService: http://swagger.io/terms/
   title: Clob API
-paths: {}
+paths:
+  /accounts:
+    post:
+      consumes:
+      - application/json
+      description: Accounts
+      parameters:
+      - description: createInputDto request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/account.createInputDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/account.createOutputDto'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/account.createOutputDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/shared.Errors'
+      summary: Accounts
+      tags:
+      - Accounts
+  /accounts/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get All By Id
+      parameters:
+      - description: account_id
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/account.getAllByIdOutputDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/shared.Errors'
+      summary: Get All By Id
+      tags:
+      - Accounts
+  /accounts/{id}/credit:
+    post:
+      consumes:
+      - application/json
+      description: Credit
+      parameters:
+      - description: account_id
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: creditInputDto request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/account.creditInputDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/account.creditOutputDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/shared.Errors'
+      summary: Credit
+      tags:
+      - Accounts
 swagger: "2.0"

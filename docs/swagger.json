@@ -8,5 +8,248 @@
             "name": "Junior Paz"
         }
     },
-    "paths": {}
+    "paths": {
+        "/accounts": {
+            "post": {
+                "description": "Accounts",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Accounts",
+                "parameters": [
+                    {
+                        "description": "createInputDto request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.createInputDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/account.createOutputDto"
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/account.createOutputDto"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/shared.Errors"
+                        }
+                    }
+                }
+            }
+        },
+        "/accounts/{id}": {
+            "get": {
+                "description": "Get All By Id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Get All By Id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "account_id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/account.getAllByIdOutputDto"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/shared.Errors"
+                        }
+                    }
+                }
+            }
+        },
+        "/accounts/{id}/credit": {
+            "post": {
+                "description": "Credit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Credit",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "account_id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "creditInputDto request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.creditInputDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/account.creditOutputDto"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/shared.Errors"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "account.createInputDto": {
+            "type": "object",
+            "required": [
+                "account_name"
+            ],
+            "properties": {
+                "account_name": {
+                    "type": "string",
+                    "example": "test"
+                }
+            }
+        },
+        "account.createOutputDto": {
+            "type": "object",
+            "properties": {
+                "account_id": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "created"
+                }
+            }
+        },
+        "account.creditInputDto": {
+            "type": "object",
+            "required": [
+                "amount",
+                "asset"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "integer",
+                    "example": 1000
+                },
+                "asset": {
+                    "type": "string",
+                    "example": "USD"
+                }
+            }
+        },
+        "account.creditOutputDto": {
+            "type": "object",
+            "properties": {
+                "account_id": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "balances": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/account.getAllByIdBalanceOutputDto"
+                    }
+                }
+            }
+        },
+        "account.getAllByIdBalanceOutputDto": {
+            "type": "object",
+            "properties": {
+                "available": {
+                    "type": "integer",
+                    "example": 1000
+                },
+                "reserved": {
+                    "type": "integer",
+                    "example": 0
+                }
+            }
+        },
+        "account.getAllByIdOutputDto": {
+            "type": "object",
+            "properties": {
+                "account_id": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "balances": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/account.getAllByIdBalanceOutputDto"
+                    }
+                }
+            }
+        },
+        "shared.Errors": {
+            "type": "object",
+            "properties": {
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "The 'name' field is required"
+                    ]
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Invalid parameter"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 400
+                }
+            }
+        }
+    }
 }
