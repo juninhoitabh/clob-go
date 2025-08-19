@@ -24,7 +24,7 @@ func Generate(apiPort string) http.Handler {
 	docs.SwaggerInfo.BasePath = apiV1Prefix
 	docs.SwaggerInfo.Schemes = []string{"http"}
 
-	mux.Handle(apiV1Prefix+"/docs/", http.StripPrefix(apiV1Prefix, httpSwagger.WrapHandler))
+	mux.Handle(apiV1Prefix+"/docs/", httpSwagger.WrapHandler)
 
 	routes.AccountGenerate(mux, apiV1Prefix)
 	routes.BookGenerate(mux, apiV1Prefix)
