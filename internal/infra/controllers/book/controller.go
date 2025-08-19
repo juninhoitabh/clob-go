@@ -1,7 +1,6 @@
 package book
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -10,10 +9,31 @@ import (
 	"github.com/juninhoitabh/clob-go/internal/shared"
 )
 
-type BookController struct {
-	bookRepo domainBook.IBookRepository
-}
+type (
+	getByInstrumentLevelOutputDto struct {
+		Price int64 `json:"price" example:"50000"`
+		Qty   int64 `json:"qty" example:"1"`
+	}
+	getByInstrumentOutputDto struct {
+		Instrument string                          `json:"instrument" example:"BTC/USDT"`
+		Bids       []getByInstrumentLevelOutputDto `json:"bids"`
+		Asks       []getByInstrumentLevelOutputDto `json:"asks"`
+	}
+	BookController struct {
+		bookRepo domainBook.IBookRepository
+	}
+)
 
+// GetByInstrument godoc
+// @Summary      Get by Instrument
+// @Description  Get by Instrument
+// @Tags         Books
+// @Accept       json
+// @Produce      json
+// @Param        instrument path      string true "instrument" example:"BTC/USDT"
+// @Success      200       {object}  getByInstrumentOutputDto
+// @Failure      500       {object}  shared.Errors
+// @Router       /books/{instrument} [get]
 func (b *BookController) Get(w http.ResponseWriter, req *http.Request) {
 	inst := req.PathValue("instrument")
 
@@ -30,24 +50,38 @@ func (b *BookController) Get(w http.ResponseWriter, req *http.Request) {
 		Instrument: inst,
 	})
 	if err != nil {
-		status := http.StatusBadRequest
-
-		if strings.Contains(err.Error(), "not found") {
-			status = http.StatusNotFound
-		}
-
-		http.Error(w, err.Error(), status)
+		shared.HandleError(w, err)
 
 		return
 	}
 
 	if book == nil {
-		http.Error(w, fmt.Sprintf("instrument %s not found (empty book yet?)", inst), http.StatusNotFound)
+		shared.HandleError(w, shared.ErrNotFound)
 
 		return
 	}
 
-	shared.WriteJSON(w, http.StatusOK, book)
+	getByInstrumentOutputDtoResponse := getByInstrumentOutputDto{
+		Instrument: book.Instrument,
+		Bids:       []getByInstrumentLevelOutputDto{},
+		Asks:       []getByInstrumentLevelOutputDto{},
+	}
+
+	for _, bid := range book.Bids {
+		getByInstrumentOutputDtoResponse.Bids = append(getByInstrumentOutputDtoResponse.Bids, getByInstrumentLevelOutputDto{
+			Price: bid.Price,
+			Qty:   bid.Qty,
+		})
+	}
+
+	for _, ask := range book.Asks {
+		getByInstrumentOutputDtoResponse.Asks = append(getByInstrumentOutputDtoResponse.Asks, getByInstrumentLevelOutputDto{
+			Price: ask.Price,
+			Qty:   ask.Qty,
+		})
+	}
+
+	shared.WriteJSON(w, http.StatusOK, getByInstrumentOutputDtoResponse)
 }
 
 func NewBookController(

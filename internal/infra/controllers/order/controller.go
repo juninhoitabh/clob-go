@@ -2,7 +2,6 @@ package order
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 	"strings"
 
@@ -36,6 +35,10 @@ type (
 	placeOutputDto struct {
 		Order  map[string]any            `json:"order"`
 		Report placeTradeReportOutputDto `json:"report"`
+	}
+	cancelOutputDto struct {
+		Order  map[string]any `json:"order"`
+		Status string         `json:"status" example:"canceled"`
 	}
 	OrderController struct {
 		bookRepo    domainBook.IBookRepository
@@ -85,13 +88,13 @@ func (o *OrderController) Place(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	placeOutputDtoResult := placeOutputDto{
+	placeOutputDtoResponse := placeOutputDto{
 		Order:  placeOrderOutput.Order.Public(),
 		Report: placeTradeReportOutputDto{},
 	}
 
 	for _, trade := range placeOrderOutput.TradeReport.Trades {
-		placeOutputDtoResult.Report.Trades = append(placeOutputDtoResult.Report.Trades, placeTradeOutputDto{
+		placeOutputDtoResponse.Report.Trades = append(placeOutputDtoResponse.Report.Trades, placeTradeOutputDto{
 			TakerOrderID: trade.TakerOrderID,
 			MakerOrderID: trade.MakerOrderID,
 			Price:        trade.Price,
@@ -101,9 +104,19 @@ func (o *OrderController) Place(w http.ResponseWriter, req *http.Request) {
 		})
 	}
 
-	shared.WriteJSON(w, http.StatusCreated, placeOutputDtoResult)
+	shared.WriteJSON(w, http.StatusCreated, placeOutputDtoResponse)
 }
 
+// Orders Cancel godoc
+// @Summary      Orders Cancel
+// @Description  Orders Cancel
+// @Tags         Orders
+// @Accept       json
+// @Produce      json
+// @Param        id        path      string          true  "order_id" Format(uuid)
+// @Success      200       {object}  cancelOutputDto
+// @Failure      500       {object}  shared.Errors
+// @Router       /orders/{id}/cancel [post]
 func (o *OrderController) Cancel(w http.ResponseWriter, req *http.Request) {
 	oid := req.PathValue("id")
 	if oid == "" {
@@ -119,18 +132,17 @@ func (o *OrderController) Cancel(w http.ResponseWriter, req *http.Request) {
 
 	cancelOrderOutput, err := cancelOrderUseCase.Execute(cancelOrderInput)
 	if err != nil {
-		status := http.StatusBadRequest
-
-		if errors.Is(err, shared.ErrNotFound) {
-			status = http.StatusNotFound
-		}
-
-		http.Error(w, err.Error(), status)
+		shared.HandleError(w, err)
 
 		return
 	}
 
-	shared.WriteJSON(w, http.StatusOK, map[string]any{"order": cancelOrderOutput.Order.Public(), "status": "canceled"})
+	cancelOutputDtoResponse := cancelOutputDto{
+		Order:  cancelOrderOutput.Order.Public(),
+		Status: "canceled",
+	}
+
+	shared.WriteJSON(w, http.StatusOK, cancelOutputDtoResponse)
 }
 
 func NewOrderController(
