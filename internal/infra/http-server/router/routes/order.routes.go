@@ -9,7 +9,7 @@ import (
 	repositoriesOrder "github.com/juninhoitabh/clob-go/internal/infra/repositories/order"
 )
 
-func OrderGenerate(router *http.ServeMux) {
+func OrderGenerate(router *http.ServeMux, apiV1Prefix string) {
 	accountRepo := repositoriesAccount.NewInMemoryAccountRepository()
 	bookRepo := repositoriesBook.NewInMemoryBookRepository()
 	orderRepo := repositoriesOrder.NewInMemoryOrderRepository()
@@ -20,6 +20,6 @@ func OrderGenerate(router *http.ServeMux) {
 		accountRepo,
 	)
 
-	router.HandleFunc("POST /orders", controller.Place)
-	router.HandleFunc("POST /orders/{id}/cancel", controller.Cancel)
+	router.HandleFunc("POST "+apiV1Prefix+"/orders", controller.Place)
+	router.HandleFunc("POST "+apiV1Prefix+"/orders/{id}/cancel", controller.Cancel)
 }

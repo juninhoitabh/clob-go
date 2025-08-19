@@ -7,10 +7,10 @@ import (
 	repositoriesBook "github.com/juninhoitabh/clob-go/internal/infra/repositories/book"
 )
 
-func BookGenerate(router *http.ServeMux) {
+func BookGenerate(router *http.ServeMux, apiV1Prefix string) {
 	bookRepo := repositoriesBook.NewInMemoryBookRepository()
 
 	controller := controllerBook.NewBookController(bookRepo)
 
-	router.HandleFunc("GET /book/{instrument...}", controller.Get)
+	router.HandleFunc("GET "+apiV1Prefix+"/book/{instrument...}", controller.Get)
 }

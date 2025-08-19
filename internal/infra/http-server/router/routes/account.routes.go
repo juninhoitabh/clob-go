@@ -8,7 +8,7 @@ import (
 	repositoriesAccount "github.com/juninhoitabh/clob-go/internal/infra/repositories/account"
 )
 
-func AccountGenerate(router *http.ServeMux) {
+func AccountGenerate(router *http.ServeMux, apiV1Prefix string) {
 	accountRepo := repositoriesAccount.NewInMemoryAccountRepository()
 	accountDAO := daosAccount.NewInMemoryAccountDAO(accountRepo.Mutex(), accountRepo.AccountsMap())
 
@@ -17,7 +17,7 @@ func AccountGenerate(router *http.ServeMux) {
 		accountRepo,
 	)
 
-	router.HandleFunc("POST /accounts", controller.Create)
-	router.HandleFunc("POST /accounts/{id}/credit", controller.Credit)
-	router.HandleFunc("GET /accounts/{id}", controller.Get)
+	router.HandleFunc("POST "+apiV1Prefix+"/accounts", controller.Create)
+	router.HandleFunc("POST "+apiV1Prefix+"/accounts/{id}/credit", controller.Credit)
+	router.HandleFunc("GET "+apiV1Prefix+"/accounts/{id}", controller.Get)
 }
