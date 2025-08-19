@@ -114,7 +114,7 @@ func (suite *OrderUnitTestSuite) TestOrder_Public() {
 	assert.NotNil(suite.T(), o)
 
 	pub := o.Public()
-	assert.Equal(suite.T(), o.ID, pub["id"])
+	assert.Equal(suite.T(), o.ID.ID, pub["id"])
 	assert.Equal(suite.T(), o.AccountID, pub["account_id"])
 	assert.Equal(suite.T(), o.Instrument, pub["instrument"])
 	assert.Equal(suite.T(), o.Price, pub["price"])
