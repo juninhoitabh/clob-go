@@ -30,12 +30,14 @@ type (
 // @Tags         Books
 // @Accept       json
 // @Produce      json
-// @Param        instrument path      string true "instrument" example:"BTC/USDT"
+// @Param        instrument query     string true "instrument" example:"BTC/USDT"
 // @Success      200       {object}  getByInstrumentOutputDto
-// @Failure      500       {object}  shared.Errors
-// @Router       /books/{instrument} [get]
+// @Failure      400       {object}  shared.Errors "Bad Request"
+// @Failure      404       {object}  shared.Errors "Not Found"
+// @Failure      500       {object}  shared.Errors "Internal Server Error"
+// @Router       /books [get]
 func (b *BookController) Get(w http.ResponseWriter, req *http.Request) {
-	inst := req.PathValue("instrument")
+	inst := req.URL.Query().Get("instrument")
 
 	inst = strings.ToUpper(inst)
 	if inst == "" {

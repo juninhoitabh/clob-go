@@ -55,7 +55,9 @@ type (
 // @Produce      json
 // @Param        request   body      placeInputDto  true  "placeInputDto request"
 // @Success      201       {object}  placeOutputDto
-// @Failure      500       {object}  shared.Errors
+// @Failure      400       {object}  shared.Errors "Bad Request"
+// @Failure      404       {object}  shared.Errors "Not Found"
+// @Failure      500       {object}  shared.Errors "Internal Server Error"
 // @Router       /orders   [post]
 func (o *OrderController) Place(w http.ResponseWriter, req *http.Request) {
 	var body placeInputDto
@@ -115,7 +117,9 @@ func (o *OrderController) Place(w http.ResponseWriter, req *http.Request) {
 // @Produce      json
 // @Param        id        path      string          true  "order_id" Format(uuid)
 // @Success      200       {object}  cancelOutputDto
-// @Failure      500       {object}  shared.Errors
+// @Failure      400       {object}  shared.Errors "Bad Request"
+// @Failure      404       {object}  shared.Errors "Not Found"
+// @Failure      500       {object}  shared.Errors "Internal Server Error"
 // @Router       /orders/{id}/cancel [post]
 func (o *OrderController) Cancel(w http.ResponseWriter, req *http.Request) {
 	oid := req.PathValue("id")

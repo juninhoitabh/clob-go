@@ -53,7 +53,9 @@ type (
 // @Param        request   body      createInputDto  true  "createInputDto request"
 // @Success      200       {object}  createOutputDto
 // @Success      201       {object}  createOutputDto
-// @Failure      500       {object}  shared.Errors
+// @Failure      400       {object}  shared.Errors "Bad Request"
+// @Failure      404       {object}  shared.Errors "Not Found"
+// @Failure      500       {object}  shared.Errors "Internal Server Error"
 // @Router       /accounts [post]
 func (a *AccountController) Create(w http.ResponseWriter, req *http.Request) {
 	var body createInputDto
@@ -97,7 +99,9 @@ func (a *AccountController) Create(w http.ResponseWriter, req *http.Request) {
 // @Produce      json
 // @Param        id        path      string               true  "account_id" Format(uuid)
 // @Success      200       {object}  getAllByIdOutputDto
-// @Failure      500       {object}  shared.Errors
+// @Failure      400       {object}  shared.Errors "Bad Request"
+// @Failure      404       {object}  shared.Errors "Not Found"
+// @Failure      500       {object}  shared.Errors "Internal Server Error"
 // @Router       /accounts/{id} [get]
 func (a *AccountController) GetAllById(w http.ResponseWriter, req *http.Request) {
 	id := req.PathValue("id")
@@ -133,7 +137,9 @@ func (a *AccountController) GetAllById(w http.ResponseWriter, req *http.Request)
 // @Param        id        path      string          true  "account_id" Format(uuid)
 // @Param        request   body      creditInputDto  true  "creditInputDto request"
 // @Success      200       {object}  creditOutputDto
-// @Failure      500       {object}  shared.Errors
+// @Failure      400       {object}  shared.Errors "Bad Request"
+// @Failure      404       {object}  shared.Errors "Not Found"
+// @Failure      500       {object}  shared.Errors "Internal Server Error"
 // @Router       /accounts/{id}/credit [post]
 func (a *AccountController) Credit(w http.ResponseWriter, req *http.Request) {
 	id := req.PathValue("id")
