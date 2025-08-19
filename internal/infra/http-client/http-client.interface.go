@@ -7,10 +7,10 @@ import (
 )
 
 type HttpResponse struct {
-	StatusCode int
-	Body       []byte
-	Headers    http.Header
 	RawBody    io.ReadCloser
+	Headers    http.Header
+	Body       []byte
+	StatusCode int
 }
 
 type HttpClient interface {

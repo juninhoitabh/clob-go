@@ -45,6 +45,7 @@ func (c *DefaultHttpClient) do(ctx context.Context, method, url string, body int
 		if err != nil {
 			return nil, err
 		}
+
 		reqBody = bytes.NewBuffer(jsonBody)
 	}
 
@@ -69,6 +70,7 @@ func (c *DefaultHttpClient) do(ctx context.Context, method, url string, body int
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		resp.Body.Close()
+
 		return nil, err
 	}
 

@@ -1,7 +1,6 @@
 package httpClient_test
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -35,7 +34,7 @@ func TestGet(t *testing.T) {
 	client := httpClient.NewDefaultHttpClient(5 * time.Second)
 	headers := map[string]string{"TestHeader": "TestValue"}
 
-	resp, err := client.Get(context.Background(), server.URL, headers)
+	resp, err := client.Get(t.Context(), server.URL, headers)
 
 	require.NoError(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
@@ -48,6 +47,7 @@ func TestPost(t *testing.T) {
 		Name  string `json:"name"`
 		Value int    `json:"value"`
 	}
+
 	payload := testPayload{Name: "test", Value: 42}
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -71,7 +71,7 @@ func TestPost(t *testing.T) {
 	client := httpClient.NewDefaultHttpClient(5 * time.Second)
 	headers := map[string]string{"TestHeader": "TestValue"}
 
-	resp, err := client.Post(context.Background(), server.URL, payload, headers)
+	resp, err := client.Post(t.Context(), server.URL, payload, headers)
 
 	require.NoError(t, err)
 	assert.Equal(t, http.StatusCreated, resp.StatusCode)
@@ -84,6 +84,7 @@ func TestPut(t *testing.T) {
 		Name  string `json:"name"`
 		Value int    `json:"value"`
 	}
+
 	payload := testPayload{Name: "updated", Value: 100}
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -104,7 +105,7 @@ func TestPut(t *testing.T) {
 
 	client := httpClient.NewDefaultHttpClient(5 * time.Second)
 
-	resp, err := client.Put(context.Background(), server.URL, payload, nil)
+	resp, err := client.Put(t.Context(), server.URL, payload, nil)
 
 	require.NoError(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
@@ -121,7 +122,7 @@ func TestDelete(t *testing.T) {
 
 	client := httpClient.NewDefaultHttpClient(5 * time.Second)
 
-	resp, err := client.Delete(context.Background(), server.URL, nil)
+	resp, err := client.Delete(t.Context(), server.URL, nil)
 
 	require.NoError(t, err)
 	assert.Equal(t, http.StatusNoContent, resp.StatusCode)
@@ -136,7 +137,7 @@ func TestErrorHandling(t *testing.T) {
 
 	client := httpClient.NewDefaultHttpClient(5 * time.Second)
 
-	resp, err := client.Get(context.Background(), server.URL, nil)
+	resp, err := client.Get(t.Context(), server.URL, nil)
 
 	require.NoError(t, err)
 	assert.Equal(t, http.StatusInternalServerError, resp.StatusCode)
@@ -146,7 +147,7 @@ func TestErrorHandling(t *testing.T) {
 func TestInvalidURL(t *testing.T) {
 	client := httpClient.NewDefaultHttpClient(5 * time.Second)
 
-	_, err := client.Get(context.Background(), "http://invalid-url-that-does-not-exist.xyz", nil)
+	_, err := client.Get(t.Context(), "http://invalid-url-that-does-not-exist.xyz", nil)
 
 	assert.Error(t, err)
 }
@@ -160,7 +161,7 @@ func TestTimeout(t *testing.T) {
 
 	client := httpClient.NewDefaultHttpClient(100 * time.Millisecond)
 
-	_, err := client.Get(context.Background(), server.URL, nil)
+	_, err := client.Get(t.Context(), server.URL, nil)
 
 	assert.Error(t, err)
 }
