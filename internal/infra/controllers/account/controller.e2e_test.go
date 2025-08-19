@@ -64,7 +64,7 @@ func (suite *AccountControllerTestSuite) TestCreate_Success() {
 	dtoToSend, err := json.Marshal(inputBody)
 	require.NoError(t, err)
 
-	res, err := suite.e2eTestHandle.HttpClient.Post(suite.basePath, bytes.NewBuffer(dtoToSend), suite.e2eTestHandle.HttpHeader)
+	res, err := http.Post(suite.basePath, "application/json", bytes.NewReader(dtoToSend))
 	require.NoError(t, err)
 	defer res.Body.Close()
 

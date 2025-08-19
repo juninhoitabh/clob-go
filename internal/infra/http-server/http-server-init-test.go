@@ -6,19 +6,16 @@ import (
 	"sync"
 
 	"github.com/juninhoitabh/clob-go/internal/infra/config"
-	"github.com/juninhoitabh/clob-go/internal/infra/infra/framework/http-client/rest"
 )
 
 type E2eTestHandle struct {
 	HttpServerTest *httptest.Server
-	HttpClient     rest.IHttpClient
 	HttpHeader     http.Header
 }
 
 func NewE2eTestHandle() *E2eTestHandle {
 	e2eTestHandle := &E2eTestHandle{
 		HttpServerTest: httpServerInitTest(),
-		HttpClient:     rest.NewHttpClientGoAdapter(),
 		HttpHeader:     http.Header{},
 	}
 
