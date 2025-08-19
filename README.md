@@ -11,7 +11,7 @@ CLOB (Central Limit Order Book) implementado em Go é um sistema completo de neg
 - **Gestão de Saldos** com reservas e atualizações
 - **Sistema totalmente thread-safe** usando mutexes
 - **Implementado apenas com stdlib** do Go
-- **Design modular** seguindo princípios Clean Architecture
+- **Design modular** seguindo princípios Clean Architecture e Domain-Driven Design (DDD)
 
 ## Build & Run
 
