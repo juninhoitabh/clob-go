@@ -36,7 +36,7 @@ func (a *Account) Prepare(typeId idObjValue.TypeIdEnum) error {
 		return err
 	}
 
-	a.NewBaseEntity("", typeId)
+	a.BaseEntity.NewBaseEntity("", typeId)
 
 	a.CreatedAt = time.Now()
 

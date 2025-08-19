@@ -46,7 +46,7 @@ func (o *Order) Prepare(typeId idObjValue.TypeIdEnum) error {
 		return err
 	}
 
-	o.NewBaseEntity("", typeId)
+	o.BaseEntity.NewBaseEntity("", typeId)
 
 	o.CreatedAt = time.Now()
 
@@ -76,7 +76,7 @@ func (o *Order) Public() map[string]any {
 	}
 
 	return map[string]any{
-		"id":         o.ID.ID,
+		"id":         o.BaseEntity.ID.ID,
 		"account_id": o.AccountID,
 		"instrument": o.Instrument,
 		"side":       side,

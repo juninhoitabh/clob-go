@@ -33,7 +33,7 @@ func (b *Book) Prepare(typeId idObjValue.TypeIdEnum) error {
 		return err
 	}
 
-	b.NewBaseEntity("", typeId)
+	b.BaseEntity.NewBaseEntity("", typeId)
 
 	b.bids = make(map[int64]*PriceLevel)
 	b.asks = make(map[int64]*PriceLevel)
